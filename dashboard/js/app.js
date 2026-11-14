@@ -233,7 +233,9 @@ const PawApp = (() => {
       video.srcObject = null;
     }
     video.src = 'assets/cctv_5min_shelter_pen2.mp4';
-    video.play().catch(e => console.log('Autoplay handled:', e));
+    video.play()
+      .then(() => { if (window.PawDetector) PawDetector.start(); })
+      .catch(e => console.log('Autoplay handled:', e));
 
     if (statusEl) {
       statusEl.innerHTML = `<span style="color: var(--mv-mauve); font-weight: 700;">▶ Real 5-Min Shelter CCTV • Live In-Browser AI Detecting Real Bounding Boxes</span>`;
@@ -279,7 +281,9 @@ const PawApp = (() => {
       video.srcObject = null;
     }
     video.src = 'assets/raw_cat.mp4';
-    video.play().catch(e => console.log('Autoplay handled:', e));
+    video.play()
+      .then(() => { if (window.PawDetector) PawDetector.start(); })
+      .catch(e => console.log('Autoplay handled:', e));
 
     if (statusEl) {
       statusEl.innerHTML = `<span style="color: var(--mv-mauve); font-weight: 700;">▶ Live Cat Video • In-Browser AI Calculating Bounding Boxes & Posture</span>`;
@@ -302,7 +306,9 @@ const PawApp = (() => {
       video.srcObject = null;
     }
     video.src = 'assets/raw_dog.mp4';
-    video.play().catch(e => console.log('Autoplay handled:', e));
+    video.play()
+      .then(() => { if (window.PawDetector) PawDetector.start(); })
+      .catch(e => console.log('Autoplay handled:', e));
 
     if (statusEl) {
       statusEl.innerHTML = `<span style="color: var(--mv-peach); font-weight: 700;">▶ Live Dog Video • In-Browser AI Calculating Bounding Boxes & Velocity</span>`;
