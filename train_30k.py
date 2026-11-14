@@ -57,7 +57,7 @@ def train_30k():
     results = model.train(
         # 1. Dataset & Hardware
         data=dataset_yaml,
-        epochs=100,
+        epochs=175,
         imgsz=1280,
         batch=4,
         device="0",
