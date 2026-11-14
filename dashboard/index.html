@@ -138,14 +138,14 @@
           <button onclick="PawApp.play5MinCCTV()" class="mv-btn-pill" style="font-size: 0.82rem; padding: 10px 18px; background: var(--mv-mauve); color: white;">
             📹 5-MIN REAL CCTV
           </button>
-          <button onclick="PawApp.playMonitoredShelter()" class="mv-btn-pill mv-btn-peach" style="font-size: 0.82rem; padding: 10px 18px;">
-            🤖 AI TRACKING OVERLAY
+          <button onclick="PawApp.playRawCat()" class="mv-btn-pill mv-btn-mauve" style="font-size: 0.82rem; padding: 10px 18px;">
+            🐱 LIVE CAT AI
           </button>
-          <button onclick="PawApp.playPresetVideo('cat')" class="mv-btn-pill mv-btn-mauve" style="font-size: 0.82rem; padding: 10px 18px;">
-            🐱 MONITORED CAT
+          <button onclick="PawApp.playRawDog()" class="mv-btn-pill mv-btn-peach" style="font-size: 0.82rem; padding: 10px 18px;">
+            🐶 LIVE DOG AI
           </button>
-          <button onclick="PawApp.playPresetVideo('dog')" class="mv-btn-pill mv-btn-peach" style="font-size: 0.82rem; padding: 10px 18px;">
-            🐶 MONITORED DOG
+          <button onclick="PawApp.useWebcam()" class="mv-btn-pill" style="background: var(--mv-sage); color: white; font-size: 0.82rem; padding: 10px 18px;">
+            📷 LIVE WEBCAM
           </button>
           <button onclick="PawApp.showLiveCanvas()" class="mv-btn-pill mv-btn-outline" style="font-size: 0.82rem; padding: 10px 18px;">
             🎨 2D SIMULATION
@@ -161,20 +161,22 @@
       <!-- Right: CCTV Stream inside Iconic Offset Rounded Frame -->
       <div id="cctv-section" class="mv-offset-frame-wrapper">
         <div class="mv-offset-border"></div>
-        <div class="mv-frame-content">
-          <!-- Canvas Overlay for live simulation -->
-          <canvas id="cctvCanvas"></canvas>
-          <!-- Video Player for Ingested / Pre-monitored Video Streams -->
-          <video id="cctvVideo" style="display: none; width: 100%; height: 100%; object-fit: contain; background: #18151D; border-radius: 36px;" controls loop playsinline></video>
+        <div class="mv-frame-content" style="position: relative; overflow: hidden; border-radius: 36px; background: #18151D;">
+          <!-- Video Player for Ingested / Raw Real Video Streams -->
+          <video id="cctvVideo" style="width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 36px;" controls loop playsinline></video>
+          <!-- Transparent Live AI Canvas Overlay (Positioned directly over video) -->
+          <canvas id="cctvOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;"></canvas>
+          <!-- Standalone Canvas for 2D Simulation -->
+          <canvas id="cctvCanvas" style="display: none; width: 100%; height: 100%;"></canvas>
 
           <!-- Top-Left HUD Badge -->
-          <div style="position: absolute; top: 16px; left: 16px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 8px; color: white; font-family: var(--font-mono); font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.15);">
-            <span class="live-dot" style="background: #DE5454;"></span>
-            LIVE PEN 2 CCTV • 30 FPS • NVIDIA RTX 5080
+          <div style="position: absolute; top: 16px; left: 16px; z-index: 20; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 8px; color: white; font-family: var(--font-mono); font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.15);">
+            <span class="live-dot" id="liveAiDot" style="background: #4DA67A;"></span>
+            <span id="liveAiStatusText">LIVE IN-BROWSER AI ENGINE • 30 FPS</span>
           </div>
 
           <!-- Bottom Floating Zone Indicators -->
-          <div style="position: absolute; bottom: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; pointer-events: none;">
+          <div style="position: absolute; bottom: 16px; left: 16px; right: 16px; z-index: 20; display: flex; justify-content: space-between; pointer-events: none;">
             <span style="background: rgba(77,166,122,0.85); backdrop-filter: blur(6px); color: white; font-size: 0.72rem; font-weight: 700; padding: 5px 14px; border-radius: var(--radius-pill); border: 1px solid rgba(255,255,255,0.2);">
               🍲 Food Bowl Area
             </span>
@@ -459,7 +461,10 @@
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- AI & Canvas Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
+  <script src="js/detector.js"></script>
   <script src="js/canvas.js"></script>
   <script src="js/app.js"></script>
   <script>

@@ -34,6 +34,14 @@ const PawApp = (() => {
     initEventListeners();
     checkSavedSupabaseConfig();
     startTelemetryHeartbeat();
+
+    // Initialize in-browser AI detector
+    const video = document.getElementById('cctvVideo');
+    const overlay = document.getElementById('cctvOverlay');
+    if (video && overlay && window.PawDetector) {
+      PawDetector.init(video, overlay);
+    }
+
     play5MinCCTV();
   }
 
@@ -154,6 +162,7 @@ const PawApp = (() => {
     if (btnZones) {
       btnZones.addEventListener('click', () => {
         const on = PawCanvas.toggleZones();
+        if (window.PawDetector) PawDetector.toggleZones();
         btnZones.classList.toggle('off', !on);
         btnZones.innerHTML = on ? '🔘 Zones: ON' : '⚪ Zones: OFF';
       });
@@ -163,6 +172,7 @@ const PawApp = (() => {
     if (btnTrails) {
       btnTrails.addEventListener('click', () => {
         const on = PawCanvas.toggleTrails();
+        if (window.PawDetector) PawDetector.toggleTrails();
         btnTrails.classList.toggle('off', !on);
         btnTrails.innerHTML = on ? '🐾 Trails: ON' : '⚪ Trails: OFF';
       });
@@ -210,52 +220,122 @@ const PawApp = (() => {
 
   function play5MinCCTV() {
     const video = document.getElementById('cctvVideo');
+    const overlay = document.getElementById('cctvOverlay');
     const canvas = document.getElementById('cctvCanvas');
     const statusEl = document.getElementById('videoStatusLabel');
-    if (!video || !canvas) return;
+    if (!video) return;
 
-    canvas.style.display = 'none';
+    if (canvas) canvas.style.display = 'none';
+    if (overlay) overlay.style.display = 'block';
     video.style.display = 'block';
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(t => t.stop());
+      video.srcObject = null;
+    }
     video.src = 'assets/cctv_5min_shelter_pen2.mp4';
     video.play().catch(e => console.log('Autoplay handled:', e));
 
     if (statusEl) {
-      statusEl.innerHTML = `<span style="color: var(--mv-mauve); font-weight: 700;">▶ Real Shelter CCTV Stream (CAM-02 Senior Dogs Room • 300s / 9000 Frames)</span>`;
+      statusEl.innerHTML = `<span style="color: var(--mv-mauve); font-weight: 700;">▶ Real 5-Min Shelter CCTV • Live In-Browser AI Detecting Real Bounding Boxes</span>`;
     }
-    showNotification('🎬 Playing Real Shelter CCTV', 'Streaming authentic 5-minute shelter surveillance recording of senior dogs in communal pen.');
+    showNotification('🎬 Real Shelter CCTV Active', 'Pure camera footage streaming: in-browser AI model detects animals and draws live bounding boxes on every frame!');
   }
 
-  function playMonitoredShelter() {
+  function playRawCat() {
     const video = document.getElementById('cctvVideo');
+    const overlay = document.getElementById('cctvOverlay');
     const canvas = document.getElementById('cctvCanvas');
     const statusEl = document.getElementById('videoStatusLabel');
-    if (!video || !canvas) return;
+    if (!video) return;
 
-    canvas.style.display = 'none';
+    if (canvas) canvas.style.display = 'none';
+    if (overlay) overlay.style.display = 'block';
     video.style.display = 'block';
-    video.src = 'assets/monitored_shelter_cctv.mp4';
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(t => t.stop());
+      video.srcObject = null;
+    }
+    video.src = 'assets/raw_cat.mp4';
     video.play().catch(e => console.log('Autoplay handled:', e));
 
     if (statusEl) {
-      statusEl.innerHTML = `<span style="color: var(--mv-peach); font-weight: 700;">▶ AI-Monitored Shelter CCTV (RT-DETR-L + ByteTrack HUD)</span>`;
+      statusEl.innerHTML = `<span style="color: var(--mv-mauve); font-weight: 700;">▶ Live Cat Video • In-Browser AI Calculating Bounding Boxes & Posture</span>`;
     }
-    showNotification('🤖 AI Tracking Active', 'Real shelter CCTV processed with RT-DETR-L bounding boxes, tracking IDs, and velocity HUD.');
+    showNotification('🐱 Real Cat AI Detection', 'Processing raw cat video: computing real-time posture ratio r=w/h and velocity on every frame.');
+  }
+
+  function playRawDog() {
+    const video = document.getElementById('cctvVideo');
+    const overlay = document.getElementById('cctvOverlay');
+    const canvas = document.getElementById('cctvCanvas');
+    const statusEl = document.getElementById('videoStatusLabel');
+    if (!video) return;
+
+    if (canvas) canvas.style.display = 'none';
+    if (overlay) overlay.style.display = 'block';
+    video.style.display = 'block';
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(t => t.stop());
+      video.srcObject = null;
+    }
+    video.src = 'assets/raw_dog.mp4';
+    video.play().catch(e => console.log('Autoplay handled:', e));
+
+    if (statusEl) {
+      statusEl.innerHTML = `<span style="color: var(--mv-peach); font-weight: 700;">▶ Live Dog Video • In-Browser AI Calculating Bounding Boxes & Velocity</span>`;
+    }
+    showNotification('🐶 Real Dog AI Detection', 'Processing raw dog video: computing trajectory coordinates, speed and cumulative meters live.');
+  }
+
+  function useWebcam() {
+    const video = document.getElementById('cctvVideo');
+    const overlay = document.getElementById('cctvOverlay');
+    const canvas = document.getElementById('cctvCanvas');
+    const statusEl = document.getElementById('videoStatusLabel');
+    if (!video) return;
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 360 }, audio: false })
+        .then(stream => {
+          if (canvas) canvas.style.display = 'none';
+          if (overlay) overlay.style.display = 'block';
+          video.style.display = 'block';
+          video.srcObject = stream;
+          video.play();
+
+          if (statusEl) {
+            statusEl.innerHTML = `<span style="color: var(--mv-sage); font-weight: 700;">📷 Live Webcam Input Active • Real-Time AI Detection</span>`;
+          }
+          showNotification('📷 Live Camera Active', 'Point your camera at your dog or cat for instant real-time AI bounding box detection!');
+        })
+        .catch(err => {
+          alert('Could not access camera: ' + err.message);
+        });
+    } else {
+      alert('Camera access is not supported by this browser.');
+    }
   }
 
   function showLiveCanvas() {
     const video = document.getElementById('cctvVideo');
+    const overlay = document.getElementById('cctvOverlay');
     const canvas = document.getElementById('cctvCanvas');
     const statusEl = document.getElementById('videoStatusLabel');
     if (!video || !canvas) return;
 
     video.pause();
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(t => t.stop());
+      video.srcObject = null;
+    }
     video.style.display = 'none';
+    if (overlay) overlay.style.display = 'none';
     canvas.style.display = 'block';
 
     if (statusEl) {
-      statusEl.innerHTML = `<span style="color: var(--mv-muted); font-weight: 600;">Real-Time Pen 2 Stream Active</span>`;
+      statusEl.innerHTML = `<span style="color: var(--mv-muted); font-weight: 600;">2D Pen Simulation Active</span>`;
     }
-    showNotification('📡 Switched to Live Pen 2', 'Continuous CCTV simulation with RT-DETR-L HUD & dynamic roaming active');
+    showNotification('📡 Switched to 2D Simulation', 'Continuous 2D pen simulation with roaming agents active.');
   }
 
   function handleVideoUpload(e) {
@@ -263,22 +343,28 @@ const PawApp = (() => {
     if (!file) return;
 
     const video = document.getElementById('cctvVideo');
+    const overlay = document.getElementById('cctvOverlay');
     const canvas = document.getElementById('cctvCanvas');
     const statusEl = document.getElementById('videoStatusLabel');
 
-    if (video && canvas) {
-      canvas.style.display = 'none';
+    if (video) {
+      if (canvas) canvas.style.display = 'none';
+      if (overlay) overlay.style.display = 'block';
       video.style.display = 'block';
+      if (video.srcObject) {
+        video.srcObject.getTracks().forEach(t => t.stop());
+        video.srcObject = null;
+      }
       video.src = URL.createObjectURL(file);
       video.play().catch(e => console.log('Autoplay handled:', e));
     }
 
     if (statusEl) {
-      statusEl.innerHTML = `<span style="color: var(--sage-600); font-weight: 600;">✓ Ingested: ${file.name} (${(file.size / (1024*1024)).toFixed(1)} MB)</span>`;
+      statusEl.innerHTML = `<span style="color: var(--mv-sage); font-weight: 700;">✓ Ingested: ${file.name} • Live In-Browser AI Detecting Bounding Boxes</span>`;
     }
 
     // Notification toast
-    showNotification(`🎬 Video Ingested: "${file.name}"`, 'Playing file inside Pen 2 Viewport with active audio/controls...');
+    showNotification(`🎬 Video Ingested: "${file.name}"`, 'In-browser AI engine running real-time object detection & clinical tracking on uploaded file!');
   }
 
   // 4. Alert Actions
@@ -459,6 +545,9 @@ const PawApp = (() => {
     playPresetVideo,
     play5MinCCTV,
     playMonitoredShelter,
+    playRawCat,
+    playRawDog,
+    useWebcam,
     showLiveCanvas,
     exportCSVReport,
     acknowledgeAlert,
