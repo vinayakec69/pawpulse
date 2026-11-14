@@ -1,0 +1,509 @@
+{
+  "timestamp": "2026-11-14T18:04:14.142775",
+  "video": "real_shelter_cctv_60s.mp4",
+  "total_frames": 1952,
+  "processed_fps": 20.1,
+  "unique_animals_tracked": 50,
+  "animals": {
+    "cat_1": {
+      "id": 1,
+      "species": "cat",
+      "total_distance_m": 3.8,
+      "resting_sec": 5.8,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 7.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_2": {
+      "id": 2,
+      "species": "cat",
+      "total_distance_m": 1.02,
+      "resting_sec": 2.1,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_3": {
+      "id": 3,
+      "species": "cat",
+      "total_distance_m": 0.53,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_4": {
+      "id": 4,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_5": {
+      "id": 5,
+      "species": "dog",
+      "total_distance_m": 0.09,
+      "resting_sec": 25.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_6": {
+      "id": 6,
+      "species": "dog",
+      "total_distance_m": 0.26,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_12": {
+      "id": 12,
+      "species": "cat",
+      "total_distance_m": 0.1,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_18": {
+      "id": 18,
+      "species": "cat",
+      "total_distance_m": 0.41,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_27": {
+      "id": 27,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_28": {
+      "id": 28,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_30": {
+      "id": 30,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_33": {
+      "id": 33,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_36": {
+      "id": 36,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_38": {
+      "id": 38,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_40": {
+      "id": 40,
+      "species": "dog",
+      "total_distance_m": 0.58,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_41": {
+      "id": 41,
+      "species": "cat",
+      "total_distance_m": 2.98,
+      "resting_sec": 16.5,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_43": {
+      "id": 43,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.1,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_47": {
+      "id": 47,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.1,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_49": {
+      "id": 49,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.1,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_51": {
+      "id": 51,
+      "species": "cat",
+      "total_distance_m": 0.31,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.4,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_53": {
+      "id": 53,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_56": {
+      "id": 56,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.5,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_59": {
+      "id": 59,
+      "species": "dog",
+      "total_distance_m": 0.26,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.1,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_60": {
+      "id": 60,
+      "species": "cat",
+      "total_distance_m": 1.35,
+      "resting_sec": 15.8,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 24.4,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_61": {
+      "id": 61,
+      "species": "dog",
+      "total_distance_m": 0.09,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.2,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_63": {
+      "id": 63,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.2,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_64": {
+      "id": 64,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.1,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_65": {
+      "id": 65,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 1.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_69": {
+      "id": 69,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.3,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_81": {
+      "id": 81,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.2,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_101": {
+      "id": 101,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_103": {
+      "id": 103,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.2,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_107": {
+      "id": 107,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 4.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_111": {
+      "id": 111,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_122": {
+      "id": 122,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.1,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_125": {
+      "id": 125,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 1.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_127": {
+      "id": 127,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_129": {
+      "id": 129,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.2,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_131": {
+      "id": 131,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.8,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_133": {
+      "id": 133,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.1,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_134": {
+      "id": 134,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_135": {
+      "id": 135,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.6,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_136": {
+      "id": 136,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_138": {
+      "id": 138,
+      "species": "dog",
+      "total_distance_m": 0.51,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.5,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_139": {
+      "id": 139,
+      "species": "cat",
+      "total_distance_m": 0.09,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_146": {
+      "id": 146,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 13.2,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_147": {
+      "id": 147,
+      "species": "dog",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_150": {
+      "id": 150,
+      "species": "cat",
+      "total_distance_m": 0.0,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.0,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "cat_153": {
+      "id": 153,
+      "species": "cat",
+      "total_distance_m": 0.11,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.4,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    },
+    "dog_157": {
+      "id": 157,
+      "species": "dog",
+      "total_distance_m": 0.08,
+      "resting_sec": 0.0,
+      "corner_dwell_sec": 0.0,
+      "food_bowl_sec": 0.1,
+      "alert_status": "Active & Healthy",
+      "is_flagged": false
+    }
+  }
+}

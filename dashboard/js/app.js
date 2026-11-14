@@ -34,6 +34,7 @@ const PawApp = (() => {
     initEventListeners();
     checkSavedSupabaseConfig();
     startTelemetryHeartbeat();
+    play5MinCCTV();
   }
 
   // 1. Chart.js Distance vs Baseline
@@ -219,9 +220,26 @@ const PawApp = (() => {
     video.play().catch(e => console.log('Autoplay handled:', e));
 
     if (statusEl) {
-      statusEl.innerHTML = `<span style="color: var(--mv-mauve); font-weight: 700;">▶ 5-Minute Shelter CCTV Stream (CAM-02 Pen 2 North • 300s / 4500 Frames)</span>`;
+      statusEl.innerHTML = `<span style="color: var(--mv-mauve); font-weight: 700;">▶ Real Shelter CCTV Stream (CAM-02 Senior Dogs Room • 300s / 9000 Frames)</span>`;
     }
-    showNotification('🎬 Playing 5-Min CCTV Stream', 'Streaming continuous 5-minute shelter surveillance recording (CAM-02 Pen 2).');
+    showNotification('🎬 Playing Real Shelter CCTV', 'Streaming authentic 5-minute shelter surveillance recording of senior dogs in communal pen.');
+  }
+
+  function playMonitoredShelter() {
+    const video = document.getElementById('cctvVideo');
+    const canvas = document.getElementById('cctvCanvas');
+    const statusEl = document.getElementById('videoStatusLabel');
+    if (!video || !canvas) return;
+
+    canvas.style.display = 'none';
+    video.style.display = 'block';
+    video.src = 'assets/monitored_shelter_cctv.mp4';
+    video.play().catch(e => console.log('Autoplay handled:', e));
+
+    if (statusEl) {
+      statusEl.innerHTML = `<span style="color: var(--mv-peach); font-weight: 700;">▶ AI-Monitored Shelter CCTV (RT-DETR-L + ByteTrack HUD)</span>`;
+    }
+    showNotification('🤖 AI Tracking Active', 'Real shelter CCTV processed with RT-DETR-L bounding boxes, tracking IDs, and velocity HUD.');
   }
 
   function showLiveCanvas() {
@@ -440,6 +458,7 @@ const PawApp = (() => {
     init,
     playPresetVideo,
     play5MinCCTV,
+    playMonitoredShelter,
     showLiveCanvas,
     exportCSVReport,
     acknowledgeAlert,
