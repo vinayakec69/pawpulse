@@ -258,19 +258,20 @@ const PawDetector = (() => {
         bbox: [cx - bw / 2, cy - bh / 2, bw, bh]
       }];
     } else {
-      // Shelter Pen 2 communal CCTV (Senior Dog)
+      // Shelter Pen 2 communal CCTV (Senior Dog resting on the green mat in bottom-left corner)
       const t = curTime % 300;
-      const walkProg = (t % 20) / 20.0;
-      const dogX = w * (0.45 + Math.sin(walkProg * Math.PI) * 0.12);
-      const dogY = h * (0.56 + Math.cos(walkProg * Math.PI) * 0.08);
-      const bw = w * 0.22;
-      const bh = h * 0.28;
+      const microX = Math.sin((t % 16) / 16.0 * Math.PI * 2) * (w * 0.008);
+      const microY = Math.cos((t % 16) / 16.0 * Math.PI * 2) * (h * 0.006);
+      const bx = w * 0.160 + microX;
+      const by = h * 0.555 + microY;
+      const bw = w * 0.165;
+      const bh = h * 0.195;
       return [{
         class: 'dog',
         id: 1,
         name: 'Buddy (Senior Dog)',
-        score: 0.91,
-        bbox: [dogX - bw / 2, dogY - bh / 2, bw, bh]
+        score: 0.93,
+        bbox: [bx, by, bw, bh]
       }];
     }
   }
