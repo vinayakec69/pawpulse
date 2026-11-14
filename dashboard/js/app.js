@@ -241,6 +241,29 @@ const PawApp = (() => {
     showNotification('🎬 Real Shelter CCTV Active', 'Pure camera footage streaming: in-browser AI model detects animals and draws live bounding boxes on every frame!');
   }
 
+  function playMonitoredShelter() {
+    const video = document.getElementById('cctvVideo');
+    const overlay = document.getElementById('cctvOverlay');
+    const canvas = document.getElementById('cctvCanvas');
+    const statusEl = document.getElementById('videoStatusLabel');
+    if (!video) return;
+
+    if (canvas) canvas.style.display = 'none';
+    if (overlay) overlay.style.display = 'none';
+    video.style.display = 'block';
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(t => t.stop());
+      video.srcObject = null;
+    }
+    video.src = 'assets/monitored_shelter_cctv.mp4';
+    video.play().catch(e => console.log('Autoplay handled:', e));
+
+    if (statusEl) {
+      statusEl.innerHTML = `<span style="color: var(--mv-peach); font-weight: 700;">▶ RT-DETR-L 1536px Monitored Shelter CCTV Stream</span>`;
+    }
+    showNotification('🤖 RT-DETR-L Monitored Stream', 'Streaming CCTV with high-res RT-DETR-L transformer bounding boxes & ByteTrack Kalman HUD.');
+  }
+
   function playRawCat() {
     const video = document.getElementById('cctvVideo');
     const overlay = document.getElementById('cctvOverlay');
