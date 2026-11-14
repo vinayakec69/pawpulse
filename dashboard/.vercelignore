@@ -1,0 +1,3 @@
+# Exclude heavy machine learning checkpoints from web deployment
+assets/best.pt
+*.pt

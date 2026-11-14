@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PawPulse — Sanctuary & Shelter Health Monitor</title>
+
+  <!-- External CDNs -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Meowville Exact Aesthetic Stylesheet -->
+  <link rel="stylesheet" href="css/meowville.css">
+  <link rel="stylesheet" href="css/pawpulse.css">
+</head>
+<body class="paw-watermark-bg">
+
+  <!-- ── 1. EXACT MEOWVILLE NAVBAR ────────────────────────────── -->
+  <nav class="mv-navbar">
+    <div class="mv-navbar-inner">
+      <a href="#" class="mv-brand">
+        <div class="mv-brand-logo">
+          PAW<span class="mv-brand-badge">🐾</span>PULSE
+        </div>
+      </a>
+
+      <!-- Center Links -->
+      <ul class="mv-nav-links">
+        <li><a href="#" class="active">Home</a></li>
+        <li><a href="#about-section">Who We Are</a></li>
+        <li><a href="#cctv-section">Enclosure CCTV</a></li>
+        <li><a href="#residents-section">Residents</a></li>
+        <li><a href="#analytics-section">Analytics</a></li>
+      </ul>
+
+      <!-- Right Actions -->
+      <div class="mv-nav-actions">
+        <button onclick="PawApp.openSupabaseModal()" class="mv-icon-btn" title="Database Configuration">
+          <i data-lucide="database" style="width: 18px; height: 18px;"></i>
+        </button>
+        <button onclick="PawApp.triggerSimulatedAlert()" class="mv-btn-pill mv-btn-mauve">
+          <span class="live-dot" style="background: #FFA5D8;"></span>
+          LIVE GUARDIAN (1 ALERT)
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── 2. HERO SECTION (High-Impact Cat Gaze Photo) ───────────── -->
+  <header class="mv-hero">
+    <!-- Unsplash Hero Cat (Exact Vibe as Meowville Screenshot 1) -->
+    <img 
+      src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=1600&q=80" 
+      alt="Sanctuary Cat" 
+      class="mv-hero-image-bg"
+    />
+    <div class="mv-hero-gradient-overlay"></div>
+
+    <div class="mv-hero-container">
+      <div class="mv-hero-content">
+        <h1 class="mv-hero-tagline">
+          WHERE RESIDENTS'<br>
+          <span class="brush-pink">DREAMS COME TRUE</span>
+        </h1>
+        <p class="mv-hero-desc">
+          Continuous veterinary vision monitoring for shelter pens. Powered by RT-DETR-L + ByteTrack to detect lethargy, prolonged corner isolation, and missed feeding routines before symptoms become critical.
+        </p>
+        <div class="mv-hero-btns">
+          <a href="#cctv-section" class="mv-btn-pill mv-btn-mauve">EXPLORE CCTV FEED</a>
+          <button onclick="PawApp.openSupabaseModal()" class="mv-btn-pill mv-btn-outline" style="border-color: rgba(255,255,255,0.4); color: white;">
+            CONNECT SUPABASE
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── 3. THE 3 OVERLAPPING CARDS (Fold-Overlap Meowville Style) ─ -->
+  <section class="mv-overlap-section">
+    <div class="mv-overlap-container">
+      <div class="mv-cards-grid">
+
+        <!-- Card 1 (Pet Welfare / Baseline) -->
+        <div class="mv-overlap-card mv-card-cream">
+          <div class="mv-card-icon-circle mv-icon-orange">
+            <i data-lucide="paw-print" style="width: 36px; height: 36px;"></i>
+          </div>
+          <h3>Daily Activity</h3>
+          <p>Continuous distance tracking calibrated against a 3-day health baseline (850m expected daily average).</p>
+          <a href="#analytics-section" class="mv-btn-pill mv-btn-mauve">VIEW METRICS</a>
+        </div>
+
+        <!-- Card 2 (Solid Mauve Alert Card - Exactly like Cat Shelter in Screenshot 1 & 2) -->
+        <div class="mv-overlap-card mv-card-mauve">
+          <div class="mv-card-icon-circle mv-icon-white-outline">
+            <i data-lucide="alert-triangle" style="width: 36px; height: 36px;"></i>
+          </div>
+          <h3>Shelter Sentinel</h3>
+          <p>🚨 <strong>Dog #3 (Shanti)</strong> has only moved 40m in 24h and stayed in the back corner. Possible early illness!</p>
+          <button onclick="PawApp.acknowledgeAlert('alert-shanti-01')" class="mv-btn-pill" style="background: white; color: var(--mv-mauve);">
+            CHECK PEN 2 NOW
+          </button>
+        </div>
+
+        <!-- Card 3 (Nutrition & Care) -->
+        <div class="mv-overlap-card mv-card-cream">
+          <div class="mv-card-icon-circle mv-icon-orange">
+            <i data-lucide="utensils" style="width: 36px; height: 36px;"></i>
+          </div>
+          <h3>Feeding Routine</h3>
+          <p>Automated polygon detection monitoring food and water bowl visits during scheduled caretaker feedings.</p>
+          <a href="#cctv-section" class="mv-btn-pill mv-btn-mauve">INSPECT ZONES</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 4. "WHO WE ARE" & CCTV OFFSET FRAME (Screenshot 2 Style) ─ -->
+  <section id="about-section" class="mv-section">
+    <div class="mv-story-grid">
+      
+      <!-- Left Narrative -->
+      <div>
+        <div class="mv-eyebrow">SHELTER INTELLIGENCE</div>
+        <h2 class="mv-heading">
+          HELP HOMELESS ANIMALS STAY HEALTHY & LOVED.
+        </h2>
+        <p class="mv-lead">
+          Traditional shelters face a silent challenge: quiet animals suffering from respiratory bugs, depression, or gastrointestinal distress often withdraw into secluded corners unnoticed until their condition is severe.
+        </p>
+        <p class="mv-lead" style="font-size: 0.95rem; color: var(--mv-muted);">
+          PawPulse transforms standard CCTV cameras into non-intrusive veterinary monitors. Using high-resolution RT-DETR-L models running at 1536px, every dog and cat is tracked with persistent identity across cage bars, mesh fences, and feeding groups.
+        </p>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px;">
+          <button onclick="PawApp.play5MinCCTV()" class="mv-btn-pill" style="font-size: 0.82rem; padding: 10px 18px; background: var(--mv-mauve); color: white;">
+            📹 PLAY 5-MIN CCTV STREAM
+          </button>
+          <button onclick="PawApp.playPresetVideo('cat')" class="mv-btn-pill mv-btn-mauve" style="font-size: 0.82rem; padding: 10px 18px;">
+            🐱 CAT VIDEO
+          </button>
+          <button onclick="PawApp.playPresetVideo('dog')" class="mv-btn-pill mv-btn-peach" style="font-size: 0.82rem; padding: 10px 18px;">
+            🐶 DOG VIDEO
+          </button>
+          <button onclick="PawApp.showLiveCanvas()" class="mv-btn-pill mv-btn-outline" style="font-size: 0.82rem; padding: 10px 18px;">
+            📡 LIVE PEN 2
+          </button>
+          <label class="mv-btn-pill mv-btn-outline" style="cursor: pointer; font-size: 0.82rem; padding: 10px 18px;">
+            <i data-lucide="upload" style="width: 15px; height: 15px;"></i>
+            UPLOAD MP4
+            <input type="file" id="videoFileInput" accept="video/mp4" style="display: none;">
+          </label>
+        </div>
+      </div>
+
+      <!-- Right: CCTV Stream inside Iconic Offset Rounded Frame -->
+      <div id="cctv-section" class="mv-offset-frame-wrapper">
+        <div class="mv-offset-border"></div>
+        <div class="mv-frame-content">
+          <!-- Canvas Overlay for live simulation -->
+          <canvas id="cctvCanvas"></canvas>
+          <!-- Video Player for Ingested / Pre-monitored Video Streams -->
+          <video id="cctvVideo" style="display: none; width: 100%; height: 100%; object-fit: contain; background: #18151D; border-radius: 36px;" controls loop playsinline></video>
+
+          <!-- Top-Left HUD Badge -->
+          <div style="position: absolute; top: 16px; left: 16px; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 8px; color: white; font-family: var(--font-mono); font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.15);">
+            <span class="live-dot" style="background: #DE5454;"></span>
+            LIVE PEN 2 CCTV • 30 FPS • NVIDIA RTX 5080
+          </div>
+
+          <!-- Bottom Floating Zone Indicators -->
+          <div style="position: absolute; bottom: 16px; left: 16px; right: 16px; display: flex; justify-content: space-between; pointer-events: none;">
+            <span style="background: rgba(77,166,122,0.85); backdrop-filter: blur(6px); color: white; font-size: 0.72rem; font-weight: 700; padding: 5px 14px; border-radius: var(--radius-pill); border: 1px solid rgba(255,255,255,0.2);">
+              🍲 Food Bowl Area
+            </span>
+            <span style="background: rgba(222,84,84,0.85); backdrop-filter: blur(6px); color: white; font-size: 0.72rem; font-weight: 700; padding: 5px 14px; border-radius: var(--radius-pill); border: 1px solid rgba(255,255,255,0.2);">
+              ⚠️ Secluded Dark Corner
+            </span>
+          </div>
+        </div>
+
+        <!-- Toggle Controls underneath viewport -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding: 0 6px;">
+          <div style="display: flex; gap: 8px;">
+            <button id="toggleZonesBtn" class="toggle-pill toggle-pill-zones" style="font-size: 0.75rem; padding: 6px 14px;">🔘 Zones: ON</button>
+            <button id="toggleTrailsBtn" class="toggle-pill toggle-pill-trails" style="font-size: 0.75rem; padding: 6px 14px;">🐾 Trails: ON</button>
+          </div>
+          <span id="videoStatusLabel" style="font-size: 0.75rem; color: var(--mv-muted); font-weight: 600;">
+            Real-Time Stream Active
+          </span>
+        </div>
+
+        <!-- Live Model Architecture & Converged Weights Banner -->
+        <div style="margin-top: 14px; padding: 12px 18px; background: rgba(158, 87, 136, 0.07); border: 1px solid rgba(158, 87, 136, 0.18); border-radius: 18px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.78rem;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--mv-sage); box-shadow: 0 0 8px rgba(77,166,122,0.8);"></span>
+            <span style="font-weight: 700; color: var(--mv-charcoal);">Active Model:</span>
+            <span style="font-family: var(--font-mono); color: var(--mv-mauve); font-weight: 700; background: rgba(158,87,136,0.12); padding: 2px 8px; border-radius: 6px;">best.pt (Epoch 165)</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 14px; font-family: var(--font-mono); color: var(--mv-muted); font-size: 0.74rem;">
+            <span>🐶 Dog: <strong style="color: var(--mv-charcoal);">64.2% mAP50</strong> (62.5% Recall)</span>
+            <span>🐱 Cat: <strong style="color: var(--mv-charcoal);">46.8% mAP50</strong> (49.5% Recall)</span>
+            <span>🎯 Overall: <strong style="color: var(--mv-sage);">55.5% Val mAP50</strong></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── 5. RESIDENT ANIMAL SHOWCASE (Boutique Pet Adoption Style) ─ -->
+  <section id="residents-section" class="mv-residents-section">
+    <div class="mv-residents-container">
+      
+      <div class="mv-residents-header">
+        <div class="mv-eyebrow" style="justify-content: center;">CARETAKER VIGILANCE</div>
+        <h2 class="mv-heading" style="font-size: 3.2rem;">MEET PEN 2 RESIDENTS</h2>
+        <p style="color: var(--mv-charcoal-sub); font-size: 0.95rem;">
+          Each animal is locked with a persistent ByteTrack ID, recording cumulative meters, resting postures, and nutrition access.
+        </p>
+      </div>
+
+      <div class="mv-residents-grid">
+
+        <!-- RESIDENT 1: BUDDY -->
+        <div class="mv-resident-card">
+          <div class="mv-resident-photo-wrap">
+            <img 
+              src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=600&q=80" 
+              alt="Buddy" 
+              class="mv-resident-photo"
+            />
+            <span class="mv-resident-status-tag tag-healthy">Healthy 🌿</span>
+          </div>
+          <div class="mv-resident-body">
+            <h3 class="mv-resident-title">Dog #1: Buddy</h3>
+            <div class="mv-resident-subtitle">Golden Mix • Pen 2 North</div>
+
+            <div class="mv-vitals-strip">
+              <div>
+                <div class="vital-item-label">Distance</div>
+                <div class="vital-item-val" id="buddyDistValue" style="color: var(--mv-sage);">850m</div>
+              </div>
+              <div>
+                <div class="vital-item-label">Bowl Visits</div>
+                <div class="vital-item-val">3x</div>
+              </div>
+              <div>
+                <div class="vital-item-label">Resting</div>
+                <div class="vital-item-val">4.2h</div>
+              </div>
+            </div>
+
+            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--mv-sage); margin: 6px 0 12px; font-weight: 600;">
+              Z-Score: +0.24σ • Posture (w/h): 0.88 (Active Upright)
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--mv-charcoal-sub); margin-bottom: 20px;">
+              Active throughout the morning. Explored open play run and fed at 8:15 AM.
+            </p>
+            <button class="mv-btn-pill mv-btn-outline" style="width: 100%; justify-content: center;">
+              VIEW TELEMETRY
+            </button>
+          </div>
+        </div>
+
+        <!-- RESIDENT 2: SHANTI (CRITICAL ATTENTION) -->
+        <div class="mv-resident-card mv-resident-flagged">
+          <div class="mv-resident-photo-wrap">
+            <img 
+              src="https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?auto=format&fit=crop&w=600&q=80" 
+              alt="Shanti" 
+              class="mv-resident-photo"
+            />
+            <span class="mv-resident-status-tag tag-flagged">Lethargic 🚨</span>
+          </div>
+          <div class="mv-resident-body">
+            <h3 class="mv-resident-title">Dog #3: Shanti</h3>
+            <div class="mv-resident-subtitle">Indie Hound • Pen 2 North</div>
+
+            <div class="mv-vitals-strip" style="background: var(--mv-rose-light);">
+              <div>
+                <div class="vital-item-label">Distance</div>
+                <div class="vital-item-val vital-danger">40m</div>
+              </div>
+              <div>
+                <div class="vital-item-label">Bowl Visits</div>
+                <div class="vital-item-val vital-danger">0x</div>
+              </div>
+              <div>
+                <div class="vital-item-label">Corner Dwell</div>
+                <div class="vital-item-val vital-danger">14.1h</div>
+              </div>
+            </div>
+
+            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--mv-rose); margin: 6px 0 12px; font-weight: 700;">
+              Z-Score: -2.81σ (Severe Drop) • Posture (w/h): 1.65 (Recumbent / Low)
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--mv-rose); font-weight: 600; margin-bottom: 20px;">
+              Stationary in back dark corner. Has not eaten today. Possible early sickness/lethargy!
+            </p>
+            <button onclick="PawApp.acknowledgeAlert('alert-shanti-01')" class="mv-btn-pill" style="background: var(--mv-rose); color: white; width: 100%; justify-content: center;">
+              SCHEDULE VET CHECK
+            </button>
+          </div>
+        </div>
+
+        <!-- RESIDENT 3: MOCHI -->
+        <div class="mv-resident-card">
+          <div class="mv-resident-photo-wrap">
+            <img 
+              src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=600&q=80" 
+              alt="Mochi" 
+              class="mv-resident-photo"
+            />
+            <span class="mv-resident-status-tag tag-resting">Resting 💤</span>
+          </div>
+          <div class="mv-resident-body">
+            <h3 class="mv-resident-title">Cat #2: Mochi</h3>
+            <div class="mv-resident-subtitle">Calico Domestic • Pen 2 North</div>
+
+            <div class="mv-vitals-strip">
+              <div>
+                <div class="vital-item-label">Distance</div>
+                <div class="vital-item-val" id="mochiDistValue" style="color: var(--mv-mauve);">320m</div>
+              </div>
+              <div>
+                <div class="vital-item-label">Bowl Visits</div>
+                <div class="vital-item-val">2x</div>
+              </div>
+              <div>
+                <div class="vital-item-label">Resting</div>
+                <div class="vital-item-val">6.5h</div>
+              </div>
+            </div>
+
+            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--mv-mauve); margin: 6px 0 12px; font-weight: 600;">
+              Z-Score: -0.15σ • Posture (w/h): 1.25 (Resting Loaf)
+            </div>
+
+            <p style="font-size: 0.85rem; color: var(--mv-charcoal-sub); margin-bottom: 20px;">
+              Normal feline resting curve. Visited food bowl after evening nap.
+            </p>
+            <button class="mv-btn-pill mv-btn-outline" style="width: 100%; justify-content: center;">
+              VIEW TELEMETRY
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── 6. ACTIVITY VS BASELINE CHART ────────────────────────── -->
+  <section id="analytics-section" class="mv-section" style="padding-top: 60px; padding-bottom: 60px;">
+    <div style="background: var(--mv-cream); border-radius: var(--radius-card); padding: 40px; box-shadow: var(--shadow-card); border: 1px solid rgba(158,87,136,0.08);">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px;">
+        <div>
+          <div class="mv-eyebrow">HEALTH BENCHMARK</div>
+          <h3 class="mv-heading" style="font-size: 2.4rem; margin-bottom: 4px;">24-HOUR DISTANCE VS BASELINE</h3>
+          <p style="font-size: 0.88rem; color: var(--mv-muted);">
+            Flags an anomaly whenever an animal's daily distance falls below 40% of their established 3-day baseline.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button onclick="PawApp.exportCSVReport()" class="mv-btn-pill mv-btn-mauve" style="font-size: 0.75rem; padding: 6px 16px; cursor: pointer;">
+            📥 EXPORT CSV REPORT
+          </button>
+          <span class="mv-btn-pill" style="background: var(--mv-mauve-light); color: var(--mv-mauve); font-size: 0.75rem;">
+            DAILY CYCLE: 24H
+          </span>
+        </div>
+      </div>
+
+      <div style="height: 260px; width: 100%;">
+        <canvas id="activityChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 7. LOGO STRIP (Exact Meowville Screenshot 3) ──────────── -->
+  <div class="mv-logo-strip">
+    <div class="mv-logo-container">
+      <div class="mv-partner-logo">
+        <i data-lucide="shield" style="width: 22px; height: 22px;"></i> LOGOIPSUM
+      </div>
+      <div class="mv-partner-logo">
+        <i data-lucide="waves" style="width: 22px; height: 22px;"></i> LOGOIPSUM
+      </div>
+      <div class="mv-partner-logo">
+        <i data-lucide="hexagon" style="width: 22px; height: 22px;"></i> LOGOIPSUM
+      </div>
+      <div class="mv-partner-logo">
+        <i data-lucide="feather" style="width: 22px; height: 22px;"></i> LOGOIPSUM
+      </div>
+      <div class="mv-partner-logo">
+        <i data-lucide="circle-dot" style="width: 22px; height: 22px;"></i> LOGO
+      </div>
+      <div class="mv-partner-logo">
+        <i data-lucide="sparkle" style="width: 22px; height: 22px;"></i> LOGOIPSUM
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 8. NURTURING BOTTOM BANNER (Exact Meowville Screenshot 3) -->
+  <footer class="mv-bottom-banner">
+    <h2>WE PROVIDE A WAY FOR YOU TO WATCH OVER ANIMALS IN NEED.</h2>
+    <p>
+      Bridging non-intrusive AI computer vision with compassionate shelter caretaking.
+    </p>
+    <a href="#cctv-section" class="mv-btn-pill mv-btn-mauve" style="font-size: 0.95rem; padding: 14px 36px;">
+      OPEN CCTV GUARDIAN
+    </a>
+  </footer>
+
+  <!-- ── 9. SUPABASE CONNECTION MODAL ────────────────────────── -->
+  <div id="supabaseModal" class="modal-overlay">
+    <div class="modal-body" style="border-radius: var(--radius-card); padding: 36px;">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div style="width: 44px; height: 44px; border-radius: 14px; background: var(--mv-mauve-light); color: var(--mv-mauve); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="database" style="width: 22px; height: 22px;"></i>
+          </div>
+          <div>
+            <div style="font-family: var(--font-brush); font-size: 1.8rem; color: var(--mv-charcoal);">Connect Supabase</div>
+            <div style="font-size: 0.72rem; color: var(--mv-muted);">Realtime Telemetry & Anomaly Alerts</div>
+          </div>
+        </div>
+        <button onclick="PawApp.closeSupabaseModal()" class="modal-close">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Project URL</label>
+        <input type="text" id="supabaseUrlInput" placeholder="https://xyzcompany.supabase.co" class="form-input" style="border-radius: 14px;">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Publishable Key (or Anon Public Key)</label>
+        <input type="password" id="supabaseKeyInput" placeholder="sb_publishable_... or eyJhbGciOi..." class="form-input" style="border-radius: 14px;">
+      </div>
+
+      <div class="form-hint" style="color: var(--mv-muted); font-size: 0.78rem;">
+        Credentials are encrypted in local session storage. If left blank, PawPulse operates in offline simulation mode.
+      </div>
+
+      <div class="modal-footer" style="margin-top: 28px;">
+        <button onclick="PawApp.closeSupabaseModal()" class="mv-btn-pill mv-btn-outline" style="padding: 10px 22px; font-size: 0.78rem;">Cancel</button>
+        <button onclick="PawApp.saveSupabaseConfig()" class="mv-btn-pill mv-btn-mauve" style="padding: 10px 24px; font-size: 0.78rem;">Save & Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/canvas.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

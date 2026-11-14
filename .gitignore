@@ -1,0 +1,39 @@
+# Virtual Environment
+.venv/
+env/
+venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Datasets (large raw images)
+dataset/
+*.zip
+
+# Training Run Artifacts (multi-GB checkpoints)
+runs/
+*.pt
+
+# Video temp files
+*.temp.avi
+*.tmp
+test_*.webm
+test_*.mp4
+
+# Temporary files
+fetch_video.py
+test_model_on_videos.py
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.agents/
+
+# Vercel
+.vercel/
+
