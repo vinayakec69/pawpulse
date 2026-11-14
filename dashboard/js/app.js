@@ -225,9 +225,11 @@ const PawApp = (() => {
     const statusEl = document.getElementById('videoStatusLabel');
     if (!video) return;
 
+    if (window.PawDetector) PawDetector.clearTracks();
     if (canvas) canvas.style.display = 'none';
     if (overlay) overlay.style.display = 'block';
     video.style.display = 'block';
+    video.muted = true;
     if (video.srcObject) {
       video.srcObject.getTracks().forEach(t => t.stop());
       video.srcObject = null;
@@ -250,9 +252,11 @@ const PawApp = (() => {
     const statusEl = document.getElementById('videoStatusLabel');
     if (!video) return;
 
+    if (window.PawDetector) PawDetector.clearTracks();
     if (canvas) canvas.style.display = 'none';
     if (overlay) overlay.style.display = 'none';
     video.style.display = 'block';
+    video.muted = true;
     if (video.srcObject) {
       video.srcObject.getTracks().forEach(t => t.stop());
       video.srcObject = null;
@@ -273,9 +277,11 @@ const PawApp = (() => {
     const statusEl = document.getElementById('videoStatusLabel');
     if (!video) return;
 
+    if (window.PawDetector) PawDetector.clearTracks();
     if (canvas) canvas.style.display = 'none';
     if (overlay) overlay.style.display = 'block';
     video.style.display = 'block';
+    video.muted = true;
     if (video.srcObject) {
       video.srcObject.getTracks().forEach(t => t.stop());
       video.srcObject = null;
@@ -298,9 +304,11 @@ const PawApp = (() => {
     const statusEl = document.getElementById('videoStatusLabel');
     if (!video) return;
 
+    if (window.PawDetector) PawDetector.clearTracks();
     if (canvas) canvas.style.display = 'none';
     if (overlay) overlay.style.display = 'block';
     video.style.display = 'block';
+    video.muted = true;
     if (video.srcObject) {
       video.srcObject.getTracks().forEach(t => t.stop());
       video.srcObject = null;
@@ -322,6 +330,8 @@ const PawApp = (() => {
     const canvas = document.getElementById('cctvCanvas');
     const statusEl = document.getElementById('videoStatusLabel');
     if (!video) return;
+
+    if (window.PawDetector) PawDetector.clearTracks();
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 360 }, audio: false })
@@ -377,6 +387,7 @@ const PawApp = (() => {
     const statusEl = document.getElementById('videoStatusLabel');
 
     if (video) {
+      if (window.PawDetector) PawDetector.clearTracks();
       if (canvas) canvas.style.display = 'none';
       if (overlay) overlay.style.display = 'block';
       video.style.display = 'block';

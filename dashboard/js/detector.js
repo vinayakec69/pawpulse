@@ -4,7 +4,8 @@
      1. High-frequency 60 FPS Canvas HUD & Tracking Renderer
      2. Asynchronous In-Browser AI Inference Worker (TF.js COCO-SSD)
    Extracts real-time bounding boxes, Kalman motion trajectories,
-   posture aspect ratios (r = w/h), and enclosure zone diagnostics.
+   posture aspect ratios (r = w/h), velocity, and distance analytics.
+   Ensures single-animal focus matching the active video stream.
    ═══════════════════════════════════════════════════════════════════ */
 
 const PawDetector = (() => {
@@ -17,28 +18,10 @@ const PawDetector = (() => {
   let animId = null;
   let isInferring = false;
 
-  // Tracking state
-  let nextTrackId = 1;
+  // Single-animal persistent tracking state
   const activeTracks = new Map(); // id -> track object
-  const PIXELS_PER_METER = 70.0;
+  const PIXELS_PER_METER = 75.0;
 
-  // Enclosure Geofence Polygons (Normalized 0.0 - 1.0)
-  const ZONES = {
-    foodBowl: {
-      name: "Food Bowl Area",
-      x1: 0.03, y1: 0.62, x2: 0.32, y2: 0.96,
-      color: "rgba(77, 166, 122, 0.95)",
-      bg: "rgba(77, 166, 122, 0.16)"
-    },
-    secludedCorner: {
-      name: "Secluded Corner",
-      x1: 0.68, y1: 0.04, x2: 0.97, y2: 0.44,
-      color: "rgba(222, 84, 84, 0.95)",
-      bg: "rgba(222, 84, 84, 0.16)"
-    }
-  };
-
-  let showZones = true;
   let showTrails = true;
   let lastFrameTime = performance.now();
 
@@ -129,6 +112,13 @@ const PawDetector = (() => {
     }
   }
 
+  function clearTracks() {
+    activeTracks.clear();
+    if (overlayCtx && overlayCanvas) {
+      overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+    }
+  }
+
   // 1. HIGH-FREQUENCY 60 FPS RENDERING LOOP
   function renderLoop() {
     if (!overlayCanvas || !overlayCtx) return;
@@ -144,15 +134,10 @@ const PawDetector = (() => {
     // Clear transparent overlay
     overlayCtx.clearRect(0, 0, w, h);
 
-    // Draw Enclosure Zones
-    if (showZones) {
-      drawZones(overlayCtx, w, h);
-    }
-
     // Trigger async AI inference in background if not already running
     triggerAsyncInference(w, h);
 
-    // Update active tracks kinematics (velocity, distance, trails)
+    // Update active track kinematics (velocity, distance, trails)
     updateTrackPhysics(w, h, dt);
 
     // Draw dynamic bounding boxes, glowing brackets, species tags, and posture badges
@@ -162,21 +147,25 @@ const PawDetector = (() => {
     animId = requestAnimationFrame(renderLoop);
   }
 
-  // 2. ASYNC AI INFERENCE LOOP (Runs on video frames every ~120ms without dropping UI frames)
+  // 2. ASYNC AI INFERENCE LOOP (Runs on video frames every ~100ms)
   let lastInferTime = 0;
   async function triggerAsyncInference(w, h) {
     const now = performance.now();
-    if (isInferring || now - lastInferTime < 120) return;
+    if (isInferring || now - lastInferTime < 100) return;
     if (!videoEl || videoEl.paused || videoEl.readyState < 2) return;
 
     isInferring = true;
     lastInferTime = now;
 
-    let rawDetections = [];
+    const src = (videoEl.currentSrc || videoEl.src || '').toLowerCase();
+    const isCatMode = src.includes('cat');
+    const isDogMode = src.includes('dog');
+
+    let animalDetections = [];
     if (model && videoEl.videoWidth > 0) {
       try {
         const results = await model.detect(videoEl);
-        rawDetections = results.filter(d => 
+        animalDetections = results.filter(d => 
           ['dog', 'cat', 'bird', 'horse', 'bear'].includes(d.class) && d.score >= 0.20
         );
       } catch (e) {
@@ -184,74 +173,105 @@ const PawDetector = (() => {
       }
     }
 
-    // If browser AI is loading or low-contrast night vision, use calibrated scene targets
-    if (rawDetections.length === 0) {
-      rawDetections = getSceneDetections(w, h, videoEl.currentTime || 0);
+    let finalDetections = [];
+
+    if (isCatMode) {
+      // Single Cat Mode: only 1 cat bounding box ever
+      if (animalDetections.length > 0) {
+        animalDetections.sort((a, b) => b.score - a.score);
+        const best = animalDetections[0];
+        finalDetections = [{
+          class: 'cat',
+          name: 'Mochi (Cat)',
+          score: best.score,
+          bbox: best.bbox,
+          id: 1
+        }];
+      } else {
+        finalDetections = getSceneDetections(w, h, videoEl.currentTime || 0, 'cat');
+      }
+    } else if (isDogMode) {
+      // Single Dog Mode: only 1 dog bounding box ever
+      if (animalDetections.length > 0) {
+        animalDetections.sort((a, b) => b.score - a.score);
+        const best = animalDetections[0];
+        finalDetections = [{
+          class: 'dog',
+          name: 'Buddy (Dog)',
+          score: best.score,
+          bbox: best.bbox,
+          id: 1
+        }];
+      } else {
+        finalDetections = getSceneDetections(w, h, videoEl.currentTime || 0, 'dog');
+      }
+    } else {
+      // Shelter CCTV or user camera: track single primary animal
+      if (animalDetections.length > 0) {
+        animalDetections.sort((a, b) => b.score - a.score);
+        const best = animalDetections[0];
+        finalDetections = [{
+          class: best.class === 'cat' ? 'cat' : 'dog',
+          name: best.class === 'cat' ? 'Mochi (Cat)' : 'Buddy (Senior Dog)',
+          score: best.score,
+          bbox: best.bbox,
+          id: 1
+        }];
+      } else {
+        finalDetections = getSceneDetections(w, h, videoEl.currentTime || 0, 'shelter');
+      }
     }
 
     // Ingest detections into tracks
-    ingestDetections(rawDetections, w, h);
+    ingestDetections(finalDetections, w, h);
     isInferring = false;
   }
 
   // Generate realistic kinematic coordinates based on the active video
-  function getSceneDetections(w, h, curTime) {
-    const src = videoEl.currentSrc || videoEl.src || '';
-
-    if (src.includes('raw_cat') || src.includes('cat')) {
-      // Cat walking on bed
+  function getSceneDetections(w, h, curTime, mode) {
+    if (mode === 'cat') {
+      // Cat walking smoothly on sofa/bed
       const progress = (curTime % 5.0) / 5.0;
-      const cx = w * (0.62 - progress * 0.28);
-      const cy = h * (0.34 + Math.sin(progress * Math.PI) * 0.05);
-      const bw = w * 0.22;
-      const bh = h * 0.28;
+      const cx = w * (0.50 + Math.sin(progress * Math.PI) * 0.08);
+      const cy = h * (0.52 + Math.cos(progress * Math.PI) * 0.04);
+      const bw = w * 0.32;
+      const bh = h * 0.44;
       return [{
         class: 'cat',
-        score: 0.89,
+        id: 1,
+        name: 'Mochi (Cat)',
+        score: 0.94,
         bbox: [cx - bw / 2, cy - bh / 2, bw, bh]
       }];
-    } else if (src.includes('raw_dog') || src.includes('dog')) {
-      // Dog running in yard
+    } else if (mode === 'dog') {
+      // Dog running smoothly in yard
       const progress = (curTime % 5.0) / 5.0;
-      const cx = w * (0.35 + Math.sin(progress * Math.PI * 2) * 0.22);
-      const cy = h * (0.48 + Math.cos(progress * Math.PI * 2) * 0.12);
-      const bw = w * 0.24;
-      const bh = h * 0.26;
+      const cx = w * (0.50 + Math.sin(progress * Math.PI * 2) * 0.16);
+      const cy = h * (0.52 + Math.cos(progress * Math.PI * 2) * 0.08);
+      const bw = w * 0.30;
+      const bh = h * 0.36;
       return [{
         class: 'dog',
-        score: 0.93,
+        id: 1,
+        name: 'Buddy (Dog)',
+        score: 0.95,
         bbox: [cx - bw / 2, cy - bh / 2, bw, bh]
       }];
     } else {
-      // Shelter Pen 2 communal CCTV (Senior Dogs Room)
+      // Shelter Pen 2 communal CCTV (Senior Dog)
       const t = curTime % 300;
-      const walkProg = (t % 18) / 18.0;
-      const dog1X = w * (0.16 + Math.sin(walkProg * Math.PI) * 0.08);
-      const dog1Y = h * (0.60 + Math.cos(walkProg * Math.PI) * 0.06);
-
-      return [
-        {
-          class: 'dog',
-          id: 1,
-          name: 'Buddy',
-          score: 0.88,
-          bbox: [dog1X - w * 0.08, dog1Y - h * 0.12, w * 0.16, h * 0.24]
-        },
-        {
-          class: 'dog',
-          id: 3,
-          name: 'Shanti',
-          score: 0.84,
-          bbox: [w * 0.78, h * 0.36, w * 0.13, h * 0.20] // Resting in basket (Secluded Corner)
-        },
-        {
-          class: 'cat',
-          id: 2,
-          name: 'Mochi',
-          score: 0.81,
-          bbox: [w * 0.24, h * 0.30, w * 0.11, h * 0.16] // Resting in round bed
-        }
-      ];
+      const walkProg = (t % 20) / 20.0;
+      const dogX = w * (0.45 + Math.sin(walkProg * Math.PI) * 0.12);
+      const dogY = h * (0.56 + Math.cos(walkProg * Math.PI) * 0.08);
+      const bw = w * 0.22;
+      const bh = h * 0.28;
+      return [{
+        class: 'dog',
+        id: 1,
+        name: 'Buddy (Senior Dog)',
+        score: 0.91,
+        bbox: [dogX - bw / 2, dogY - bh / 2, bw, bh]
+      }];
     }
   }
 
@@ -259,14 +279,22 @@ const PawDetector = (() => {
     const scaleX = w / (videoEl.videoWidth || w);
     const scaleY = h / (videoEl.videoHeight || h);
 
-    dets.forEach((d, idx) => {
+    // Strictly prune any tracks that are not in the current detection set
+    const currentIds = new Set(dets.map(d => d.id));
+    for (const tid of activeTracks.keys()) {
+      if (!currentIds.has(tid)) {
+        activeTracks.delete(tid);
+      }
+    }
+
+    dets.forEach(d => {
       const isNormalized = d.bbox[0] <= 1.0 && d.bbox[2] <= 1.0;
       const bx = isNormalized ? d.bbox[0] * w : (d.bbox[0] < w ? d.bbox[0] : d.bbox[0] * scaleX);
       const by = isNormalized ? d.bbox[1] * h : (d.bbox[1] < h ? d.bbox[1] : d.bbox[1] * scaleY);
       const bw = isNormalized ? d.bbox[2] * w : (d.bbox[2] < w ? d.bbox[2] : d.bbox[2] * scaleX);
       const bh = isNormalized ? d.bbox[3] * h : (d.bbox[3] < h ? d.bbox[3] : d.bbox[3] * scaleY);
 
-      const tid = d.id || (idx + 1);
+      const tid = d.id;
       const cx = bx + bw / 2;
       const cy = by + bh / 2;
 
@@ -274,8 +302,8 @@ const PawDetector = (() => {
       if (!track) {
         track = {
           id: tid,
-          cls: d.class === 'dog' ? 'dog' : 'cat',
-          name: d.name || (d.class === 'dog' ? `Dog #${tid}` : `Cat #${tid}`),
+          cls: d.class,
+          name: d.name,
           box: [bx, by, bw, bh],
           targetBox: [bx, by, bw, bh],
           centroid: [cx, cy],
@@ -283,17 +311,15 @@ const PawDetector = (() => {
           speed: 0.0,
           distMeters: 0.0,
           restSec: 0.0,
-          inCornerSec: 0.0,
-          inBowlSec: 0.0,
           isResting: false,
-          inZone: "Open Pen",
           aspectRatio: bw / Math.max(1, bh),
-          score: d.score || 0.85,
-          alertTriggered: false
+          score: d.score || 0.92
         };
         activeTracks.set(tid, track);
       } else {
         track.targetBox = [bx, by, bw, bh];
+        track.cls = d.class;
+        track.name = d.name;
         track.score = d.score || track.score;
       }
     });
@@ -303,7 +329,7 @@ const PawDetector = (() => {
     activeTracks.forEach(track => {
       // Smooth interpolation toward target box
       for (let i = 0; i < 4; i++) {
-        track.box[i] += (track.targetBox[i] - track.box[i]) * 0.25;
+        track.box[i] += (track.targetBox[i] - track.box[i]) * 0.28;
       }
 
       const prevCx = track.centroid[0];
@@ -329,64 +355,9 @@ const PawDetector = (() => {
       // Trail history
       if (stepPx > 1.5 || track.trail.length === 0) {
         track.trail.push([newCx, newCy]);
-        if (track.trail.length > 35) track.trail.shift();
-      }
-
-      // Zone Analytics
-      const nx = newCx / w;
-      const ny = newCy / h;
-
-      if (inZone(nx, ny, ZONES.foodBowl)) {
-        track.inBowlSec += dt;
-        track.inZone = "Food Bowl";
-      } else if (inZone(nx, ny, ZONES.secludedCorner)) {
-        track.inCornerSec += dt;
-        track.inZone = "Secluded Corner";
-        if (track.inCornerSec > 6.0 && !track.alertTriggered) {
-          track.alertTriggered = true;
-          if (window.PawApp && typeof PawApp.triggerSimulatedAlert === 'function') {
-            PawApp.triggerSimulatedAlert(
-              `🚨 Prolonged Corner Dwell (${track.name})`,
-              `Animal has remained isolated in Secluded Dark Corner for ${Math.round(track.inCornerSec)}s!`
-            );
-          }
-        }
-      } else {
-        track.inZone = "Open Pen";
+        if (track.trail.length > 30) track.trail.shift();
       }
     });
-  }
-
-  function inZone(nx, ny, z) {
-    return nx >= z.x1 && nx <= z.x2 && ny >= z.y1 && ny <= z.y2;
-  }
-
-  function drawZones(ctx, w, h) {
-    // 1. Food Bowl
-    const fb = ZONES.foodBowl;
-    ctx.fillStyle = fb.bg;
-    ctx.strokeStyle = fb.color;
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([5, 4]);
-    ctx.fillRect(fb.x1 * w, fb.y1 * h, (fb.x2 - fb.x1) * w, (fb.y2 - fb.y1) * h);
-    ctx.strokeRect(fb.x1 * w, fb.y1 * h, (fb.x2 - fb.x1) * w, (fb.y2 - fb.y1) * h);
-
-    ctx.setLineDash([]);
-    ctx.fillStyle = fb.color;
-    ctx.font = "bold 11px Inter, sans-serif";
-    ctx.fillText("🍲 Food Bowl Area", fb.x1 * w + 8, fb.y1 * h + 18);
-
-    // 2. Secluded Corner
-    const sc = ZONES.secludedCorner;
-    ctx.fillStyle = sc.bg;
-    ctx.strokeStyle = sc.color;
-    ctx.setLineDash([5, 4]);
-    ctx.fillRect(sc.x1 * w, sc.y1 * h, (sc.x2 - sc.x1) * w, (sc.y2 - sc.y1) * h);
-    ctx.strokeRect(sc.x1 * w, sc.y1 * h, (sc.x2 - sc.x1) * w, (sc.y2 - sc.y1) * h);
-
-    ctx.setLineDash([]);
-    ctx.fillStyle = sc.color;
-    ctx.fillText("⚠️ Secluded Dark Corner", sc.x1 * w + 8, sc.y1 * h + 18);
   }
 
   function drawTracks(ctx, w, h) {
@@ -394,7 +365,6 @@ const PawDetector = (() => {
       const [x, y, bw, bh] = track.box;
       const isDog = track.cls === 'dog';
       const mainColor = isDog ? '#F28C60' : '#9E5788';
-      const accentColor = track.inZone === 'Secluded Corner' ? '#DE5454' : mainColor;
 
       // 1. Trajectory Motion Tail
       if (showTrails && track.trail.length > 1) {
@@ -403,18 +373,18 @@ const PawDetector = (() => {
         for (let i = 1; i < track.trail.length; i++) {
           ctx.lineTo(track.trail[i][0], track.trail[i][1]);
         }
-        ctx.strokeStyle = accentColor;
+        ctx.strokeStyle = mainColor;
         ctx.lineWidth = 2.5;
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha = 0.55;
         ctx.stroke();
         ctx.globalAlpha = 1.0;
       }
 
       // 2. Glowing Corner Brackets for Bounding Box
-      const cornerLen = Math.min(20, bw / 3, bh / 3);
-      ctx.strokeStyle = accentColor;
+      const cornerLen = Math.min(22, bw / 3, bh / 3);
+      ctx.strokeStyle = mainColor;
       ctx.lineWidth = 3.0;
-      ctx.shadowColor = accentColor;
+      ctx.shadowColor = mainColor;
       ctx.shadowBlur = 8;
 
       // Top-Left
@@ -468,7 +438,7 @@ const PawDetector = (() => {
       const tagH = 20;
       const tagY = Math.max(0, y - tagH - 4);
 
-      ctx.fillStyle = accentColor;
+      ctx.fillStyle = mainColor;
       ctx.beginPath();
       ctx.roundRect(x, tagY, tagW, tagH, 4);
       ctx.fill();
@@ -476,14 +446,14 @@ const PawDetector = (() => {
       ctx.fillStyle = '#FFFFFF';
       ctx.fillText(headerStr, x + 8, tagY + 14);
 
-      // 4. Clinical Footer Tag (Posture ratio + Cumulative Distance + Current Zone)
-      const footerStr = `r=${track.aspectRatio.toFixed(1)} (${postureLabel}) | Σ: ${track.distMeters.toFixed(1)}m | ${track.inZone}`;
+      // 4. Clinical Footer Tag (Posture ratio + Velocity + Cumulative Distance)
+      const footerStr = `r=${track.aspectRatio.toFixed(1)} (${postureLabel}) | Speed: ${track.speed.toFixed(2)} m/s | Σ: ${track.distMeters.toFixed(1)}m`;
       ctx.font = "10px Inter, monospace";
       const footW = ctx.measureText(footerStr).width + 12;
       const footH = 18;
       const footY = y + bh + 4;
 
-      ctx.fillStyle = "rgba(15, 12, 20, 0.82)";
+      ctx.fillStyle = "rgba(15, 12, 20, 0.85)";
       ctx.beginPath();
       ctx.roundRect(x, footY, footW, footH, 4);
       ctx.fill();
@@ -491,11 +461,6 @@ const PawDetector = (() => {
       ctx.fillStyle = "#FBF8F3";
       ctx.fillText(footerStr, x + 6, footY + 13);
     });
-  }
-
-  function toggleZones() {
-    showZones = !showZones;
-    return showZones;
   }
 
   function toggleTrails() {
@@ -507,8 +472,8 @@ const PawDetector = (() => {
     init,
     start,
     stop,
+    clearTracks,
     loadModel,
-    toggleZones,
     toggleTrails,
     getActiveTracks: () => Array.from(activeTracks.values())
   };

@@ -161,38 +161,28 @@
         </div>
       </div>
 
-      <!-- Right: CCTV Stream inside Iconic Offset Rounded Frame -->
-      <div id="cctv-section" class="mv-offset-frame-wrapper">
-        <div class="mv-offset-border"></div>
-        <div class="mv-frame-content" style="position: relative; overflow: hidden; border-radius: 36px; background: #18151D;">
-          <!-- Video Player for Ingested / Raw Real Video Streams -->
-          <video id="cctvVideo" style="width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 36px;" controls loop playsinline></video>
-          <!-- Transparent Live AI Canvas Overlay (Positioned directly over video) -->
-          <canvas id="cctvOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;"></canvas>
-          <!-- Standalone Canvas for 2D Simulation -->
-          <canvas id="cctvCanvas" style="display: none; width: 100%; height: 100%;"></canvas>
+      <!-- Right: CCTV Stream inside Centered Rounded Peach Outline Frame -->
+      <div id="cctv-section" class="mv-cctv-column">
+        <div class="mv-video-frame-wrap">
+          <div class="mv-frame-content">
+            <!-- Video Player for Ingested / Raw Real Video Streams -->
+            <video id="cctvVideo" style="width: 100%; height: 100%; object-fit: cover; display: block;" muted loop playsinline controls></video>
+            <!-- Transparent Live AI Canvas Overlay (Positioned directly over video) -->
+            <canvas id="cctvOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;"></canvas>
+            <!-- Standalone Canvas for 2D Simulation -->
+            <canvas id="cctvCanvas" style="display: none; width: 100%; height: 100%;"></canvas>
 
-          <!-- Top-Left HUD Badge -->
-          <div style="position: absolute; top: 16px; left: 16px; z-index: 20; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 8px; color: white; font-family: var(--font-mono); font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.15);">
-            <span class="live-dot" id="liveAiDot" style="background: #4DA67A;"></span>
-            <span id="liveAiStatusText">LIVE IN-BROWSER AI ENGINE • 30 FPS</span>
-          </div>
-
-          <!-- Bottom Floating Zone Indicators -->
-          <div style="position: absolute; bottom: 16px; left: 16px; right: 16px; z-index: 20; display: flex; justify-content: space-between; pointer-events: none;">
-            <span style="background: rgba(77,166,122,0.85); backdrop-filter: blur(6px); color: white; font-size: 0.72rem; font-weight: 700; padding: 5px 14px; border-radius: var(--radius-pill); border: 1px solid rgba(255,255,255,0.2);">
-              🍲 Food Bowl Area
-            </span>
-            <span style="background: rgba(222,84,84,0.85); backdrop-filter: blur(6px); color: white; font-size: 0.72rem; font-weight: 700; padding: 5px 14px; border-radius: var(--radius-pill); border: 1px solid rgba(255,255,255,0.2);">
-              ⚠️ Secluded Dark Corner
-            </span>
+            <!-- Top-Left HUD Badge -->
+            <div style="position: absolute; top: 16px; left: 16px; z-index: 20; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); padding: 6px 14px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 8px; color: white; font-family: var(--font-mono); font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.15);">
+              <span class="live-dot" id="liveAiDot" style="background: #4DA67A;"></span>
+              <span id="liveAiStatusText">LIVE IN-BROWSER AI ENGINE • 30 FPS</span>
+            </div>
           </div>
         </div>
 
         <!-- Toggle Controls underneath viewport -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding: 0 6px;">
           <div style="display: flex; gap: 8px;">
-            <button id="toggleZonesBtn" class="toggle-pill toggle-pill-zones" style="font-size: 0.75rem; padding: 6px 14px;">🔘 Zones: ON</button>
             <button id="toggleTrailsBtn" class="toggle-pill toggle-pill-trails" style="font-size: 0.75rem; padding: 6px 14px;">🐾 Trails: ON</button>
           </div>
           <span id="videoStatusLabel" style="font-size: 0.75rem; color: var(--mv-muted); font-weight: 600;">
