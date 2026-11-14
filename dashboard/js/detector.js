@@ -503,7 +503,7 @@ const PawDetector = (() => {
     return showTrails;
   }
 
-  return {
+  const api = {
     init,
     start,
     stop,
@@ -512,4 +512,9 @@ const PawDetector = (() => {
     toggleTrails,
     getActiveTracks: () => Array.from(activeTracks.values())
   };
+
+  if (typeof window !== 'undefined') {
+    window.PawDetector = api;
+  }
+  return api;
 })();
