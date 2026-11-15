@@ -14,8 +14,11 @@ import cv2
 from ultralytics import RTDETR
 
 def main():
-    video_path = "dashboard/assets/cctv_5min_shelter_pen2.mp4"
-    model_path = "best.pt"
+    import os
+    video_path = sys.argv[1] if len(sys.argv) > 1 else r"C:\animal\dashboard\assets\monitored_shelter_cctv.mp4"
+    if not os.path.exists(video_path):
+        video_path = r"C:\animal\dashboard\assets\cctv_5min_shelter_pen2.mp4"
+    model_path = r"C:\animal\best.pt"
 
     print("=" * 60)
     print("🐾 PawPulse Desktop Live AI Media Player")
