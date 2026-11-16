@@ -222,19 +222,22 @@
 
       <div class="mv-residents-grid">
 
-        <!-- RESIDENT 1: BUDDY -->
+        <!-- RESIDENT 1: BUDDY (REAL CCTV SURVEILLANCE FEED) -->
         <div class="mv-resident-card">
-          <div class="mv-resident-photo-wrap">
+          <div class="mv-resident-photo-wrap" style="position: relative;">
             <img 
-              src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=600&q=80" 
-              alt="Buddy" 
+              src="assets/resident_buddy_cctv.jpg" 
+              alt="Dog #1: Buddy - Pen 2 CCTV Night Vision Capture" 
               class="mv-resident-photo"
             />
             <span class="mv-resident-status-tag tag-healthy">Healthy 🌿</span>
+            <div style="position: absolute; bottom: 8px; left: 10px; background: rgba(20,20,25,0.88); color: #fff; font-family: var(--font-mono); font-size: 0.68rem; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; display: flex; align-items: center; gap: 5px;">
+              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #28a745;"></span> CAM-02 • PEN 2 MAIN RUN
+            </div>
           </div>
           <div class="mv-resident-body">
             <h3 class="mv-resident-title">Dog #1: Buddy</h3>
-            <div class="mv-resident-subtitle">Golden Mix • Pen 2 North</div>
+            <div class="mv-resident-subtitle">Caramel Shelter Hound • Pen 2 Central Blanket</div>
 
             <div class="mv-vitals-strip">
               <div>
@@ -252,11 +255,11 @@
             </div>
 
             <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--mv-sage); margin: 6px 0 12px; font-weight: 600;">
-              Z-Score: +0.24σ • Posture (w/h): 0.88 (Active Upright)
+              ByteTrack ID #101 • Z-Score: +0.24σ • Posture: 0.88 (Upright)
             </div>
 
             <p style="font-size: 0.85rem; color: var(--mv-charcoal-sub); margin-bottom: 20px;">
-              Active throughout the morning. Explored open play run and fed at 8:15 AM.
+              Active throughout the surveillance cycle. Patrols central green blanket and fed on schedule at 8:15 AM.
             </p>
             <button class="mv-btn-pill mv-btn-outline" style="width: 100%; justify-content: center;">
               VIEW TELEMETRY
@@ -264,19 +267,22 @@
           </div>
         </div>
 
-        <!-- RESIDENT 2: SHANTI (CRITICAL ATTENTION) -->
+        <!-- RESIDENT 2: SHANTI (CRITICAL ATTENTION - CORNER BED 4) -->
         <div class="mv-resident-card mv-resident-flagged">
-          <div class="mv-resident-photo-wrap">
+          <div class="mv-resident-photo-wrap" style="position: relative;">
             <img 
-              src="https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?auto=format&fit=crop&w=600&q=80" 
-              alt="Shanti" 
+              src="assets/resident_shanti_cctv.jpg" 
+              alt="Dog #3: Shanti - Corner Bed CCTV Capture" 
               class="mv-resident-photo"
             />
             <span class="mv-resident-status-tag tag-flagged">Lethargic 🚨</span>
+            <div style="position: absolute; bottom: 8px; left: 10px; background: rgba(220,53,69,0.92); color: #fff; font-family: var(--font-mono); font-size: 0.68rem; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #fff;"></span> CAM-02 • CORNER BED 4 [14.1h ISOLATION]
+            </div>
           </div>
           <div class="mv-resident-body">
             <h3 class="mv-resident-title">Dog #3: Shanti</h3>
-            <div class="mv-resident-subtitle">Indie Hound • Pen 2 North</div>
+            <div class="mv-resident-subtitle">Indie Rescue Hound • Pen 2 East Perimeter</div>
 
             <div class="mv-vitals-strip" style="background: var(--mv-rose-light);">
               <div>
@@ -294,11 +300,11 @@
             </div>
 
             <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--mv-rose); margin: 6px 0 12px; font-weight: 700;">
-              Z-Score: -2.81σ (Severe Drop) • Posture (w/h): 1.65 (Recumbent / Low)
+              ByteTrack ID #103 • Z-Score: -2.81σ (Severe Drop) • Posture: 1.65 (Recumbent)
             </div>
 
             <p style="font-size: 0.85rem; color: var(--mv-rose); font-weight: 600; margin-bottom: 20px;">
-              Stationary in back dark corner. Has not eaten today. Possible early sickness/lethargy!
+              Stationary in back dark corner basket bed. Zero bowl visits logged in 24 hours. Early sickness flagged!
             </p>
             <button onclick="PawApp.acknowledgeAlert('alert-shanti-01')" class="mv-btn-pill" style="background: var(--mv-rose); color: white; width: 100%; justify-content: center;">
               SCHEDULE VET CHECK
@@ -306,19 +312,22 @@
           </div>
         </div>
 
-        <!-- RESIDENT 3: MOCHI -->
+        <!-- RESIDENT 3: MOCHI (FELINE SANCTUARY RECOVERY WARD) -->
         <div class="mv-resident-card">
-          <div class="mv-resident-photo-wrap">
+          <div class="mv-resident-photo-wrap" style="position: relative;">
             <img 
-              src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=600&q=80" 
-              alt="Mochi" 
+              src="assets/resident_mochi_cctv.jpg" 
+              alt="Cat #2: Mochi - Feline Ward CCTV Capture" 
               class="mv-resident-photo"
             />
             <span class="mv-resident-status-tag tag-resting">Resting 💤</span>
+            <div style="position: absolute; bottom: 8px; left: 10px; background: rgba(20,20,25,0.88); color: #fff; font-family: var(--font-mono); font-size: 0.68rem; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; display: flex; align-items: center; gap: 5px;">
+              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #9E5788;"></span> CAM-04 • FELINE RECOVERY WARD B
+            </div>
           </div>
           <div class="mv-resident-body">
             <h3 class="mv-resident-title">Cat #2: Mochi</h3>
-            <div class="mv-resident-subtitle">Calico Domestic • Pen 2 North</div>
+            <div class="mv-resident-subtitle">Domestic Tabby • Cattery Sanctuary Pod B</div>
 
             <div class="mv-vitals-strip">
               <div>
@@ -336,11 +345,11 @@
             </div>
 
             <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--mv-mauve); margin: 6px 0 12px; font-weight: 600;">
-              Z-Score: -0.15σ • Posture (w/h): 1.25 (Resting Loaf)
+              ByteTrack ID #202 • Z-Score: -0.15σ • Posture: 1.25 (Resting Loaf)
             </div>
 
             <p style="font-size: 0.85rem; color: var(--mv-charcoal-sub); margin-bottom: 20px;">
-              Normal feline resting curve. Visited food bowl after evening nap.
+              Normal post-op feline recovery curve in sanctuary ward. Regular evening hydration logged.
             </p>
             <button class="mv-btn-pill mv-btn-outline" style="width: 100%; justify-content: center;">
               VIEW TELEMETRY
@@ -380,29 +389,83 @@
     </div>
   </section>
 
-  <!-- ── 7. LOGO STRIP (Exact Meowville Screenshot 3) ──────────── -->
-  <div class="mv-logo-strip">
-    <div class="mv-logo-container">
-      <div class="mv-partner-logo">
-        <i data-lucide="shield" style="width: 22px; height: 22px;"></i> LOGOIPSUM
+  <!-- ── 7. PRODUCTION TECHNOLOGY STACK ──────────────────────── -->
+  <section class="mv-logo-strip" id="tech-stack-section" style="padding: 55px 2rem; background: #fffcf9;">
+    <div style="max-width: 1240px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <span class="mv-eyebrow" style="justify-content: center; font-size: 0.78rem; letter-spacing: 0.16em; margin-bottom: 6px;">
+          EDGE AI & DEEP LEARNING ARCHITECTURE
+        </span>
+        <h3 style="font-family: var(--font-display); font-size: 1.85rem; color: var(--mv-charcoal); margin: 0;">
+          Technologies Powering PawPulse
+        </h3>
       </div>
-      <div class="mv-partner-logo">
-        <i data-lucide="waves" style="width: 22px; height: 22px;"></i> LOGOIPSUM
-      </div>
-      <div class="mv-partner-logo">
-        <i data-lucide="hexagon" style="width: 22px; height: 22px;"></i> LOGOIPSUM
-      </div>
-      <div class="mv-partner-logo">
-        <i data-lucide="feather" style="width: 22px; height: 22px;"></i> LOGOIPSUM
-      </div>
-      <div class="mv-partner-logo">
-        <i data-lucide="circle-dot" style="width: 22px; height: 22px;"></i> LOGO
-      </div>
-      <div class="mv-partner-logo">
-        <i data-lucide="sparkle" style="width: 22px; height: 22px;"></i> LOGOIPSUM
+
+      <div class="mv-tech-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; align-items: stretch;">
+        
+        <!-- TECH 1: RT-DETR-L -->
+        <div class="mv-tech-card" style="background: var(--mv-cream); border: 1px solid rgba(158,87,136,0.14); border-radius: 14px; padding: 20px 16px; text-align: center; transition: all 0.25s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(224, 122, 95, 0.14); color: var(--mv-terracotta); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+            <i data-lucide="cpu" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: var(--mv-charcoal); letter-spacing: 0.02em;">RT-DETR-L</div>
+          <div style="font-size: 0.74rem; color: var(--mv-terracotta); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin: 3px 0 6px;">Vision Transformer</div>
+          <div style="font-size: 0.76rem; color: var(--mv-charcoal-sub); line-height: 1.35;">Real-Time 1280px Deformable Multi-Scale Attention</div>
+        </div>
+
+        <!-- TECH 2: PyTorch 2.6 -->
+        <div class="mv-tech-card" style="background: var(--mv-cream); border: 1px solid rgba(158,87,136,0.14); border-radius: 14px; padding: 20px 16px; text-align: center; transition: all 0.25s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(238, 76, 44, 0.14); color: #EE4C2C; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+            <i data-lucide="flame" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: var(--mv-charcoal); letter-spacing: 0.02em;">PyTorch 2.6</div>
+          <div style="font-size: 0.74rem; color: #EE4C2C; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin: 3px 0 6px;">Deep Learning Core</div>
+          <div style="font-size: 0.76rem; color: var(--mv-charcoal-sub); line-height: 1.35;">FP16 Mixed Precision & Gradient Accumulation</div>
+        </div>
+
+        <!-- TECH 3: ByteTrack -->
+        <div class="mv-tech-card" style="background: var(--mv-cream); border: 1px solid rgba(158,87,136,0.14); border-radius: 14px; padding: 20px 16px; text-align: center; transition: all 0.25s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(129, 178, 154, 0.18); color: var(--mv-sage); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+            <i data-lucide="crosshair" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: var(--mv-charcoal); letter-spacing: 0.02em;">ByteTrack</div>
+          <div style="font-size: 0.74rem; color: var(--mv-sage); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin: 3px 0 6px;">Multi-Object Tracking</div>
+          <div style="font-size: 0.76rem; color: var(--mv-charcoal-sub); line-height: 1.35;">Kalman Filter & Persistent Animal Re-ID</div>
+        </div>
+
+        <!-- TECH 4: OpenCV -->
+        <div class="mv-tech-card" style="background: var(--mv-cream); border: 1px solid rgba(158,87,136,0.14); border-radius: 14px; padding: 20px 16px; text-align: center; transition: all 0.25s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(92, 62, 232, 0.14); color: #5C3EE8; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+            <i data-lucide="video" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: var(--mv-charcoal); letter-spacing: 0.02em;">OpenCV</div>
+          <div style="font-size: 0.74rem; color: #5C3EE8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin: 3px 0 6px;">Computer Vision</div>
+          <div style="font-size: 0.76rem; color: var(--mv-charcoal-sub); line-height: 1.35;">High-Speed RTSP Decoding & Keyframe Analysis</div>
+        </div>
+
+        <!-- TECH 5: NVIDIA CUDA 12.8 -->
+        <div class="mv-tech-card" style="background: var(--mv-cream); border: 1px solid rgba(158,87,136,0.14); border-radius: 14px; padding: 20px 16px; text-align: center; transition: all 0.25s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(118, 185, 0, 0.16); color: #6ca700; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+            <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: var(--mv-charcoal); letter-spacing: 0.02em;">CUDA 12.8</div>
+          <div style="font-size: 0.74rem; color: #6ca700; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin: 3px 0 6px;">Hardware Engine</div>
+          <div style="font-size: 0.76rem; color: var(--mv-charcoal-sub); line-height: 1.35;">RTX 5080 Blackwell Architecture Tensor Cores</div>
+        </div>
+
+        <!-- TECH 6: Supabase -->
+        <div class="mv-tech-card" style="background: var(--mv-cream); border: 1px solid rgba(158,87,136,0.14); border-radius: 14px; padding: 20px 16px; text-align: center; transition: all 0.25s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(62, 207, 142, 0.16); color: #2bb374; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+            <i data-lucide="database" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: var(--mv-charcoal); letter-spacing: 0.02em;">Supabase</div>
+          <div style="font-size: 0.74rem; color: #2bb374; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin: 3px 0 6px;">Cloud Database</div>
+          <div style="font-size: 0.76rem; color: var(--mv-charcoal-sub); line-height: 1.35;">PostgreSQL & Realtime Health Stream Sync</div>
+        </div>
+
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- ── 8. NURTURING BOTTOM BANNER (Exact Meowville Screenshot 3) -->
   <footer class="mv-bottom-banner">

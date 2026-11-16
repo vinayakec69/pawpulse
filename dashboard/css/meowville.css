@@ -659,6 +659,16 @@ body {
   gap: 8px;
 }
 
+.mv-tech-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.mv-tech-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(158, 87, 136, 0.35) !important;
+  box-shadow: 0 12px 28px rgba(158, 87, 136, 0.09) !important;
+}
+
 /* ── 7. NURTURING BOTTOM BANNER ────────────────────────────────── */
 .mv-bottom-banner {
   padding: 90px 2rem;
