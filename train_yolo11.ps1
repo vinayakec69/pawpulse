@@ -1,11 +1,11 @@
-﻿# PawPulse YOLO11 High-Accuracy Training Launcher (PowerShell)
+﻿# PawPulse YOLO11-X 150-Epoch Maximum Accuracy Training Launcher (PowerShell)
 # Hardware: NVIDIA GeForce RTX 5080 (16GB VRAM)
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "🐾 PAWPULSE: STARTING YOLO11 HIGH-ACCURACY TRAINING" -ForegroundColor Green
+Write-Host "🐾 PAWPULSE: STARTING YOLO11-X 150-EPOCH HIGH-ACCURACY TRAINING" -ForegroundColor Green
 Write-Host "⚡ Target Device: NVIDIA GeForce RTX 5080 (device=0)" -ForegroundColor Yellow
 Write-Host "📁 Dataset: C:\animal\dataset\dataset_30k\data_30k.yaml" -ForegroundColor White
-Write-Host "🎯 Target: 60 Epochs | batch=8 | imgsz=1280" -ForegroundColor Magenta
+Write-Host "🎯 Target: 150 Epochs | batch=8 | imgsz=1280 | YOLO11-X (Flagship)" -ForegroundColor Magenta
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 Set-Location -Path "C:\animal"

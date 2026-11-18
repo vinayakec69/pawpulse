@@ -1,20 +1,23 @@
 """
 PawPulse YOLO11 Maximum Accuracy Training Engine
-Architecture: YOLO11-X (Flagship Extra-Large) / YOLO11-L
+Architecture: YOLO11-X (Flagship Extra-Large, 56.9M Parameters)
 Hardware: NVIDIA GeForce RTX 5080 (16GB VRAM, Tensor Cores, CUDA 12.8)
-Dataset: C:/animal/dataset/dataset_30k/data_30k.yaml (23,778 images)
+Dataset: C:/animal/dataset/dataset_30k/data_30k.yaml (23,778 verified images)
 
-Key Advantages over RT-DETR-L:
-- Task-Aligned Assigner (TAL) for significantly higher mAP50 and mAP50-95
-- Larger batch size (batch=8) for clean, stable Batch Normalization
-- Zero FP16 NaN instability (smooth full cosine annealing)
-- Compact ~50MB production weights with 100+ FPS inference
+Complete Hyperparameter Suite:
+- 150 Epochs with Cosine Learning Rate Schedule (lr0=0.001 -> lrf=0.01)
+- Double-Penalized Species Classification (cls=2.0) to eliminate Cat vs Dog confusion
+- High-Precision Bounding Box IoU (box=7.5, dfl=1.5)
+- Surveillance CCTV Lighting & Geometry Invariance (hsv_s=0.5, hsv_v=0.4, perspective=0.0008, shear=2.0)
+- Controlled Mosaic with Late Phasing (mosaic=0.5, close_mosaic=15)
+- Regularized Generalization (label_smoothing=0.05, weight_decay=0.0005, erasing=0.25)
+- Memory-Safe High Throughput: batch=8 on 16GB RTX 5080
 """
 
 import os
 import sys
 
-# CUDA Allocator Configuration for RTX 5080
+# Configure CUDA Allocator before PyTorch imports to prevent memory fragmentation on Windows
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "garbage_collection_threshold:0.8,max_split_size_mb:128"
 
 import torch
@@ -22,7 +25,7 @@ from ultralytics import YOLO
 
 def train_yolo11():
     print("=" * 75)
-    print("🐾 PAWPULSE YOLO11 HIGH-ACCURACY TRAINING ENGINE (RTX 5080)")
+    print("🐾 PAWPULSE YOLO11-X MAXIMUM ACCURACY TRAINING ENGINE — 150 EPOCHS")
     print("=" * 75)
 
     if not torch.cuda.is_available():
@@ -38,21 +41,23 @@ def train_yolo11():
     if not os.path.exists(dataset_yaml):
         dataset_yaml = r"C:\animal\dataset\data.yaml"
 
-    # Flagship high-accuracy model: yolo11x (Extra-Large, 56.9M params)
-    # If downloading 'yolo11x.pt' takes too long, fallback to 'yolo11l.pt' (25M params)
     base_model = "yolo11x.pt"
 
-    print(f"📦 Base Architecture: {base_model} (Flagship Accuracy)")
+    print(f"📦 Base Weights: {base_model} (Flagship YOLO11-X)")
     print(f"📁 Dataset: {dataset_yaml}")
     print("=" * 75)
-    print("⚙️ HIGH-ACCURACY HYPERPARAMETER CONFIGURATION:")
-    print("   [1] Model:           YOLO11-X (Flagship Deep CNN + C2PSA Attention)")
-    print("   [2] Resolution:      1280x1280 (High-definition surveillance)")
-    print("   [3] Batch Size:      batch=8 (Stable batch normalization & gradients)")
-    print("   [4] Target Epochs:   60 epochs (Estimated ~10 hours on RTX 5080)")
-    print("   [5] Loss Weights:    cls=1.5 (Penalized species loss), box=7.5")
-    print("   [6] Surveillance:    hsv_v=0.4, hsv_s=0.5, degrees=10.0, fliplr=0.5")
-    print("   [7] Early Stopping:  patience=20 epochs")
+    print("⚙️ EXHAUSTIVE HYPERPARAMETER SPECIFICATION:")
+    print("   [1] Architecture:       YOLO11-X (56.9M params, C3k2 + C2PSA Attention Neck)")
+    print("   [2] Resolution:         1280x1280 (High-definition surveillance)")
+    print("   [3] Batch Size:         batch=8 (Optimal Batch-Norm stability on RTX 5080)")
+    print("   [4] Total Epochs:       150 Epochs")
+    print("   [5] Optimizer:          AdamW (lr0=0.001, lrf=0.01, cos_lr=True, warmup=5 epochs)")
+    print("   [6] Species Loss:       cls=2.0 (Doubled species penalty on Cat vs Dog confusion)")
+    print("   [7] Box Regression:     box=7.5, dfl=1.5 (Distribution Focal Loss)")
+    print("   [8] Augmentations:      mosaic=0.5, close_mosaic=15, erasing=0.25")
+    print("   [9] CCTV Invariance:    hsv_v=0.4, hsv_s=0.5, degrees=15.0, perspective=0.0008, shear=2.0")
+    print("   [10] Regularization:    label_smoothing=0.05, weight_decay=0.0005")
+    print("   [11] Checkpointing:     save_period=5, patience=30 (Early stopping protection)")
     print("=" * 75)
 
     model = YOLO(base_model)
@@ -60,7 +65,7 @@ def train_yolo11():
     results = model.train(
         # 1. Dataset & Hardware
         data=dataset_yaml,
-        epochs=60,
+        epochs=150,
         imgsz=1280,
         batch=8,
         device="0",
@@ -68,50 +73,53 @@ def train_yolo11():
         amp=True,
         cache=False,
 
-        # 2. Optimization
+        # 2. Optimizer & Learning Rate Schedule
         optimizer="AdamW",
         lr0=0.001,
         lrf=0.01,
         cos_lr=True,
-        warmup_epochs=3,
+        warmup_epochs=5,
         warmup_momentum=0.8,
+        warmup_bias_lr=0.1,
         weight_decay=0.0005,
 
-        # 3. High-Accuracy Loss Balancing
-        cls=1.5,                 # Heavy penalty on Cat vs Dog confusion
-        box=7.5,                 # Tight spatial IoU localization
-        dfl=1.5,                 # Distribution Focal Loss for sub-pixel boundary accuracy
-        label_smoothing=0.05,
+        # 3. Loss Scaling & Balancing
+        cls=2.0,                 # Doubled classification loss: heavy penalty on Cat vs Dog confusion
+        box=7.5,                 # High spatial localization accuracy for tight bounding boxes
+        dfl=1.5,                 # Distribution Focal Loss for sub-pixel boundary regression
+        label_smoothing=0.05,    # Softens targets: prevents overconfidence on ambiguous dark silhouettes
 
-        # 4. CCTV Invariance Augmentations
-        mosaic=0.5,              # Controlled mosaic for scale diversity
-        close_mosaic=10,         # Turn OFF mosaic in final 10 epochs for pristine silhouette convergence
-        mixup=0.0,               # Off: Keep distinct fur textures
-        copy_paste=0.0,
-        fliplr=0.5,
-        flipud=0.0,
-        degrees=10.0,
-        scale=0.3,
-        shear=1.5,
-        perspective=0.0005,
-        erasing=0.20,
-        hsv_h=0.015,
-        hsv_s=0.5,
-        hsv_v=0.4,
+        # 4. Anti-Scrambling & Silhouette Augmentations
+        mosaic=0.5,              # Controlled mosaic for scale & multi-animal density diversity
+        close_mosaic=15,         # Disable mosaic for the final 15 epochs for pristine natural silhouette convergence
+        mixup=0.0,               # OFF: Never blend transparent dog and cat images
+        copy_paste=0.0,          # OFF: Never paste cat limbs onto dogs
 
-        # 5. Checkpointing & Organization
-        patience=20,
+        # 5. Surveillance & CCTV Environmental Invariance
+        fliplr=0.5,              # 50% horizontal flip (left/right motion invariance)
+        flipud=0.0,              # 0% vertical flip (animals do not walk on ceilings)
+        degrees=15.0,            # +/- 15 deg camera mounting rotation
+        scale=0.3,               # +/- 30% scale variation (handles near & far camera distance)
+        shear=2.0,               # 2 deg shear angle (handles overhead fisheye angle distortion)
+        perspective=0.0008,      # Top-down perspective transformation
+        erasing=0.25,            # 25% random cutout (robust to cage bars, bowls & obstacle occlusion)
+        hsv_h=0.015,             # Subtle hue variation (+/- 1.5%)
+        hsv_s=0.5,               # Strong saturation jitter (handles washed-out monochrome infrared)
+        hsv_v=0.4,               # Strong brightness jitter (handles pitch-black corners & glaring spotlights)
+
+        # 6. Checkpointing & Monitoring
+        patience=30,             # Early stopping if no mAP gain in 30 epochs
         save=True,
-        save_period=5,
+        save_period=5,           # Saves checkpoint every 5 epochs
         project=r"C:\animal\runs\shelter_monitoring",
-        name="train_yolo11_rtx5080",
+        name="train_yolo11x_150e_rtx5080",
         exist_ok=True,
         plots=True,
         verbose=True
     )
 
-    print("\n🎉 YOLO11 Training Complete!")
-    best_weights = r"C:\animal\runs\shelter_monitoring\train_yolo11_rtx5080\weights\best.pt"
+    print("\n🎉 YOLO11-X 150-Epoch Training Complete!")
+    best_weights = r"C:\animal\runs\shelter_monitoring\train_yolo11x_150e_rtx5080\weights\best.pt"
     print(f"⭐ Optimal converged weights saved to: {best_weights}")
 
 if __name__ == "__main__":
