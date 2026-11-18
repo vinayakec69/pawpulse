@@ -14,7 +14,11 @@ import subprocess
 from datetime import datetime
 
 LOG_FILE = r"C:\animal\training_monitor.log"
-RUN_DIR = r"C:\animal\runs\shelter_monitoring\train_rtdetr_l_30k_rtx5080"
+RUN_DIR = r"C:\animal\runs\shelter_monitoring\train_rtdetr_x_150e_rtx5080"
+if not os.path.exists(RUN_DIR):
+    RUN_DIR = r"C:\animal\runs\shelter_monitoring\train_yolo11x_150e_rtx5080"
+if not os.path.exists(RUN_DIR):
+    RUN_DIR = r"C:\animal\runs\shelter_monitoring\train_rtdetr_l_30k_rtx5080"
 RESULTS_CSV = os.path.join(RUN_DIR, "results.csv")
 BEST_PT = os.path.join(RUN_DIR, "weights", "best.pt")
 
@@ -35,10 +39,9 @@ def get_gpu_metrics():
 
 def is_training_running():
     try:
-        # Check running processes with train_30k.py
         cmd = ["powershell", "-NoProfile", "-Command", "Get-CimInstance Win32_Process -Filter \"Name like '%python%'\" | Select-Object -ExpandProperty CommandLine"]
         out = subprocess.check_output(cmd, encoding="utf-8", stderr=subprocess.DEVNULL)
-        return "train_30k.py" in out
+        return "train_rtdetr_x.py" in out or "train_yolo11.py" in out or "train_30k.py" in out
     except Exception:
         return False
 
