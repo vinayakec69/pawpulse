@@ -27,10 +27,10 @@ from ultralytics import RTDETR
 def parse_args():
     parser = argparse.ArgumentParser(description="PawPulse RT-DETR-X Flagship Training Engine")
     parser.add_argument("--epochs", type=int, default=150, help="Total training epochs (default: 150)")
-    parser.add_argument("--imgsz", type=int, default=640, choices=[640, 960, 1280],
-                        help="Input resolution: 640 (fast, native COCO pretraining) or 1280 (high-res CCTV)")
+    parser.add_argument("--imgsz", type=int, default=640,
+                        help="Input resolution: e.g. 640 (fast, native COCO), 768, 800 (classic DETR), 960, or 1280 (high-res CCTV)")
     parser.add_argument("--batch", type=int, default=0,
-                        help="Batch size (0 = auto-select safe batch for 16GB VRAM: 8 for 640, 2 for 1280)")
+                        help="Batch size (0 = auto-select safe batch for 16GB VRAM: 8 for 640, 4 for 800, 2 for 960/1280)")
     parser.add_argument("--workers", type=int, default=4, help="Dataloader workers (default: 4)")
     parser.add_argument("--device", type=str, default="0", help="CUDA device (default: '0')")
     parser.add_argument("--resume", action="store_true", help="Resume from last checkpoint if exists")
@@ -43,10 +43,12 @@ def train_rtdetr_x():
     if args.batch <= 0:
         if args.imgsz <= 640:
             batch_size = 8
+        elif args.imgsz <= 800:
+            batch_size = 4  # 800px at batch=4 uses 6.8GB VRAM (safe, no paging)
         elif args.imgsz <= 960:
-            batch_size = 2  # batch=4 hits 19.9GB (pages into RAM); batch=2 is safe
+            batch_size = 2  # 960px at batch=2 uses 7.5GB VRAM
         else:
-            batch_size = 2  # 1280px at batch=2 uses 8.8GB (pure VRAM speed)
+            batch_size = 2  # 1280px at batch=2 uses 8.8GB VRAM
     else:
         batch_size = args.batch
 
