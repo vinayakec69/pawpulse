@@ -247,17 +247,29 @@ class TrackedTarget:
         cy = int((self.smoothed_bbox[1] + self.smoothed_bbox[3]) / 2)
         self.trail.append((cx, cy))
 
+def compute_box_iou(b1, b2):
+    x1 = max(b1[0], b2[0])
+    y1 = max(b1[1], b2[1])
+    x2 = min(b1[2], b2[2])
+    y2 = min(b1[3], b2[3])
+    inter = max(0, x2 - x1) * max(0, y2 - y1)
+    a1 = (b1[2] - b1[0]) * (b1[3] - b1[1])
+    a2 = (b2[2] - b2[0]) * (b2[3] - b2[1])
+    union = a1 + a2 - inter
+    return inter / union if union > 0 else 0.0
+
 # ── ASYNC VIDEO INFERENCE THREAD ─────────────────────────────────────────────
 class VideoInferenceWorker(QThread):
     frame_ready = pyqtSignal(QImage)
     telemetry_ready = pyqtSignal(dict)
     error_signal = pyqtSignal(str)
 
-    def __init__(self, source_path, model_path, conf_thresh=0.25):
+    def __init__(self, source_path, model_path, conf_thresh=0.35, enclosure_mode="canine"):
         super().__init__()
         self.source_path = source_path
         self.model_path = model_path
         self.conf_thresh = conf_thresh
+        self.enclosure_mode = enclosure_mode
         self.is_running = True
         self.draw_boxes = True
         self.draw_trails = True
@@ -270,7 +282,7 @@ class VideoInferenceWorker(QThread):
         self.last_primary_centroid = None
 
     def run(self):
-        print(f"⚡ Loading Model: {self.model_path}")
+        print(f"⚡ Loading Model: {self.model_path} (Enclosure Mode: {self.enclosure_mode})")
         try:
             device = "0" if torch.cuda.is_available() else "cpu"
             model = RTDETR(self.model_path)
@@ -280,7 +292,14 @@ class VideoInferenceWorker(QThread):
             return
 
         is_coco_model = (len(model.names) > 10)
-        target_classes = [15, 16] if is_coco_model else None
+        
+        # Enclosure Species Filter
+        if is_coco_model:
+            target_classes = [15, 16] # Filter model evaluation strictly to feline (15) and canine (16)
+        elif len(model.names) == 2:
+            target_classes = [0, 1]
+        else:
+            target_classes = None
 
         if str(self.source_path).isdigit():
             cap = cv2.VideoCapture(int(self.source_path))
@@ -311,14 +330,39 @@ class VideoInferenceWorker(QThread):
                 results = model.predict(frame, conf=self.conf_thresh, device=0, verbose=False)
             infer_ms = (time.time() - t0) * 1000.0
 
-            raw_detections = []
+            candidates = []
             for r in results:
                 for b in r.boxes:
                     cls_id = int(b.cls[0].item())
-                    name = model.names[cls_id].upper()
+                    raw_name = model.names[cls_id].upper()
                     conf = float(b.conf[0].item())
                     xyxy = b.xyxy[0].cpu().numpy().astype(int).tolist()
-                    raw_detections.append((xyxy, name, conf))
+                    candidates.append({
+                        "xyxy": xyxy,
+                        "conf": conf,
+                        "cls_id": cls_id,
+                        "raw_name": raw_name
+                    })
+
+            # Sort descending by confidence
+            candidates.sort(key=lambda d: d["conf"], reverse=True)
+
+            # IoU Deduplication across overlapping queries on the same animal
+            raw_detections = []
+            for c in candidates:
+                overlap = False
+                for rd in raw_detections:
+                    if compute_box_iou(c["xyxy"], rd[0]) > 0.40:
+                        overlap = True
+                        break
+                if not overlap:
+                    if self.enclosure_mode == "canine":
+                        species_name = "DOG"
+                    elif self.enclosure_mode == "feline":
+                        species_name = "CAT"
+                    else:
+                        species_name = "DOG" if ("DOG" in c["raw_name"] or c["cls_id"] in [16, 0]) else "CAT"
+                    raw_detections.append((c["xyxy"], species_name, c["conf"]))
 
             # ── TEMPORAL TARGET ASSOCIATION ──
             matched_target_ids = set()
@@ -516,7 +560,7 @@ class PawPulseMainWindow(QMainWindow):
         # Populate model choices
         models = [
             ("⚡ RT-DETR-X COCO Universal (Multi-Dog/Cat All Angles)", r"C:\animal\rtdetr-x.pt"),
-            ("🎯 RT-DETR-X Shelter Converged (Epoch 119 - 65.5% mAP)", r"C:\animal\runs\shelter_monitoring\train_rtdetr_x_150e_rtx5080\weights\best.pt"),
+            ("🎯 RT-DETR-X Shelter Converged (Epoch 120 - 65.5% mAP)", r"C:\animal\runs\shelter_monitoring\train_rtdetr_x_150e_rtx5080\weights\best.pt"),
             ("🛡️ RT-DETR-L Shelter Baseline (best.pt)", r"C:\animal\best.pt")
         ]
         for name, path in models:
@@ -559,8 +603,17 @@ class PawPulseMainWindow(QMainWindow):
         self.source_combo.addItem("📹 High-Res Dog Stream (test_dog_hiera.mp4)", r"C:\animal\test_dog_hiera.mp4")
         self.source_combo.addItem("📹 Feline Ward Stream (test_cat.mp4)", r"C:\animal\test_cat.mp4")
         self.source_combo.addItem("🎥 USB / IP Webcam (Camera 0)", "0")
-        self.source_combo.setFixedWidth(280)
+        self.source_combo.setFixedWidth(240)
+        self.source_combo.currentIndexChanged.connect(self.on_source_changed)
         ctrl_layout.addWidget(self.source_combo)
+
+        ctrl_layout.addWidget(QLabel("Enclosure Ward:"))
+        self.ward_combo = QComboBox()
+        self.ward_combo.addItem("🐕 Canine Pen (Dogs Only)", "canine")
+        self.ward_combo.addItem("🐈 Feline Ward (Cats Only)", "feline")
+        self.ward_combo.addItem("🐾 Multi-Species Ward (Mixed)", "mixed")
+        self.ward_combo.setFixedWidth(200)
+        ctrl_layout.addWidget(self.ward_combo)
 
         self.browse_btn = QPushButton("📂 Browse...")
         self.browse_btn.clicked.connect(self.browse_video_file)
@@ -611,10 +664,10 @@ class PawPulseMainWindow(QMainWindow):
 
         toggles_layout.addWidget(QLabel("Confidence:"))
         self.conf_slider = QSlider(Qt.Orientation.Horizontal)
-        self.conf_slider.setRange(10, 80)
-        self.conf_slider.setValue(25) # Default 25% for high sensitivity to all animals
+        self.conf_slider.setRange(15, 85)
+        self.conf_slider.setValue(35) # Default 35% for clean real-time tracking
         self.conf_slider.setFixedWidth(120)
-        self.conf_val_lbl = QLabel("25%")
+        self.conf_val_lbl = QLabel("35%")
         self.conf_slider.valueChanged.connect(self.update_confidence)
         toggles_layout.addWidget(self.conf_slider)
         toggles_layout.addWidget(self.conf_val_lbl)
@@ -694,20 +747,29 @@ class PawPulseMainWindow(QMainWindow):
             self.worker.draw_posture = self.chk_posture.isChecked()
             self.worker.draw_zones = self.chk_zones.isChecked()
 
+    def on_source_changed(self, index):
+        src = str(self.source_combo.currentData()).lower()
+        if "cat" in src:
+            self.ward_combo.setCurrentIndex(1) # Feline Ward
+        else:
+            self.ward_combo.setCurrentIndex(0) # Canine Pen
+
     def start_inference(self):
         source = self.source_combo.currentData()
         model_path = self.model_combo.currentData()
         conf = self.conf_slider.value() / 100.0
+        ward_mode = self.ward_combo.currentData()
 
         self.start_btn.setEnabled(False)
         self.stop_btn.setEnabled(True)
         self.source_combo.setEnabled(False)
+        self.ward_combo.setEnabled(False)
         self.browse_btn.setEnabled(False)
         self.model_combo.setEnabled(False)
 
-        self.status_bar.showMessage(f"Running Inference with {os.path.basename(model_path)} on {os.path.basename(str(source))}...")
+        self.status_bar.showMessage(f"Running Inference ({self.ward_combo.currentText()}) with {os.path.basename(model_path)} on {os.path.basename(str(source))}...")
 
-        self.worker = VideoInferenceWorker(source, model_path, conf)
+        self.worker = VideoInferenceWorker(source, model_path, conf, enclosure_mode=ward_mode)
         self.worker.draw_boxes = self.chk_boxes.isChecked()
         self.worker.draw_trails = self.chk_trails.isChecked()
         self.worker.draw_posture = self.chk_posture.isChecked()
@@ -726,6 +788,7 @@ class PawPulseMainWindow(QMainWindow):
         self.start_btn.setEnabled(True)
         self.stop_btn.setEnabled(False)
         self.source_combo.setEnabled(True)
+        self.ward_combo.setEnabled(True)
         self.browse_btn.setEnabled(True)
         self.model_combo.setEnabled(True)
         self.status_bar.showMessage("AI Inference Stopped.")
